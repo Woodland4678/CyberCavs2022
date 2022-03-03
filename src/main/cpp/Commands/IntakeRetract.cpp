@@ -24,7 +24,9 @@ IntakeRetract::IntakeRetract(): frc::Command() {
 
 // Called just before this Command runs the first time
 void IntakeRetract::Initialize() {
-
+    Robot::intake->RetractIntake();
+    Robot::intake->SetPusherPower(0);
+    Robot::intake->SetRollerPower(0);
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -34,7 +36,7 @@ void IntakeRetract::Execute() {
 
 // Make this return true when this Command no longer needs to run execute()
 bool IntakeRetract::IsFinished() {
-    return false;
+    return true;
 }
 
 // Called once after isFinished returns true

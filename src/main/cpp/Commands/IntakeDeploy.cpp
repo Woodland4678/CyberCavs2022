@@ -24,7 +24,9 @@ IntakeDeploy::IntakeDeploy(): frc::Command() {
 
 // Called just before this Command runs the first time
 void IntakeDeploy::Initialize() {
-
+    Robot::intake->DeployIntake();
+    Robot::intake->SetPusherPower(0.8);
+    Robot::intake->SetRollerPower(0.8);
 }
 
 // Called repeatedly when this Command is scheduled to run
@@ -39,7 +41,8 @@ bool IntakeDeploy::IsFinished() {
 
 // Called once after isFinished returns true
 void IntakeDeploy::End() {
-
+    Robot::intake->SetRollerPower(0);
+    Robot::intake->SetPusherPower(0);
 }
 
 // Called when another command which requires one or more of the same

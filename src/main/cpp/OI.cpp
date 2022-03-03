@@ -36,6 +36,16 @@ driverGamepad.reset(new frc::Joystick(0));
 
 driver_Btn1_X.reset(new frc::JoystickButton(driverGamepad.get(), 1));
 driver_Btn1_X->WhileHeld(new Climb());
+driver_Btn2_A.reset(new frc::JoystickButton(driverGamepad.get(), 2));
+driver_Btn2_A->WhenPressed(new IntakeDeploy());
+driver_Btn3_B.reset(new frc::JoystickButton(driverGamepad.get(), 3));
+driver_Btn3_B->WhenPressed(new IntakeRetract());
+driver_Btn5_LB.reset(new frc::JoystickButton(driverGamepad.get(), 5));
+driver_Btn5_LB->WhenPressed(new LowGear());
+driver_Btn6_RB.reset(new frc::JoystickButton(driverGamepad.get(), 6));
+driver_Btn6_RB->WhenPressed(new HighGear());
+driver_Btn8_RT.reset(new frc::JoystickButton(driverGamepad.get(), 8));
+driver_Btn8_RT->WhileHeld(new ShootHigh());
 
     // SmartDashboard Buttons
     frc::SmartDashboard::PutData("ShootLow", new ShootLow());
