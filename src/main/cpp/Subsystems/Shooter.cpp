@@ -38,7 +38,7 @@ hoodSolenoid.reset(new frc::Solenoid(0, frc::PneumaticsModuleType::CTREPCM, 0));
     shooterPidController.SetI(0.000001);
     shooterPidController.SetD(0);
     shooterPidController.SetFF(0);
-    shooterPidController.SetOutputRange(-0.85, 0.85);
+    shooterPidController.SetOutputRange(-1, 1);
 }
 
 void Shooter::InitDefaultCommand() {
@@ -53,8 +53,18 @@ void Shooter::Periodic() {
     // Put code here to be run every loop
     frc::SmartDashboard::PutNumber("Shooter Actual RPM", shooterEncoder.GetVelocity());
 }
-void Shooter::SetShooterVelocity(double velocity) {
+
+int shooterSpeeedUpCount = 0;
+bool Shooter::SetShooterVelocity(double velocity, double shooterError=150) {
     shooterPidController.SetReference(velocity, rev::ControlType::kVelocity);
+    if (abs(shooterEncoder.GetVelocity()-velocity)<=shooterError){
+        shooterSpeeedUpCount++;
+        if (shooterSpeeedUpCount>=10){
+             return true;
+        }
+    }
+
+    return false;
     //leaderMotor.Set(-1);
 }
 void Shooter::SetPID(double p, double i, double d) {

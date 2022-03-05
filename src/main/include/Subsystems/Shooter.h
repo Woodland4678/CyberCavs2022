@@ -37,7 +37,7 @@ Shooter();
 	void InitDefaultCommand() override;
 	void Periodic() override;
 	void SetShooterPower(double power);
-	void SetShooterVelocity(double velocity);
+	bool SetShooterVelocity(double velocity, double shooterError);
 	void SetHoodHighGoal();
 	void SetHoodLowGoal();
 	void Shoot();

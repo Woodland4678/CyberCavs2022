@@ -24,6 +24,7 @@ IntakeRetract::IntakeRetract(): frc::Command() {
 
 // Called just before this Command runs the first time
 void IntakeRetract::Initialize() {
+    Robot::magazine->SetIsDeployed(false);
     Robot::intake->RetractIntake();
     Robot::intake->SetPusherPower(0);
     Robot::intake->SetRollerPower(0);

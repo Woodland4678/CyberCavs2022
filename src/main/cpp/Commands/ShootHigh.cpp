@@ -25,7 +25,6 @@ ShootHigh::ShootHigh(): frc::Command() {
 double kP = 0.05, kI = 0, kD = 0, setSpeed = -3750;
 // Called just before this Command runs the first time
 void ShootHigh::Initialize() {
-    Robot::shooter->SetShooterVelocity(setSpeed);
     frc::SmartDashboard::PutNumber("Shooter P", kP);
     frc::SmartDashboard::PutNumber("Shooter I", kI);
     frc::SmartDashboard::PutNumber("Shooter D", kD);
@@ -34,8 +33,12 @@ void ShootHigh::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void ShootHigh::Execute() {
-    Robot::magazine->SetIndexerPower(1);
-    Robot::magazine->SetHopperPower(0.5);
+    if(Robot::shooter->SetShooterVelocity(setSpeed, 150)){
+        Robot::magazine->SetIsShooting(true);
+        Robot::magazine->SetIndexerPower(1);
+        Robot::magazine->SetHopperPower(0.5);
+    }
+
     /*double p = frc::SmartDashboard::GetNumber("Shooter P", 0.05);
     double i = frc::SmartDashboard::GetNumber("Shooter I", 0);
     double d = frc::SmartDashboard::GetNumber("Shooter D", 0);
@@ -62,6 +65,7 @@ void ShootHigh::End() {
     Robot::magazine->SetHopperPower(0);
     Robot::magazine->SetIndexerPower(0);
     Robot::shooter->StopShooterMotor();
+    Robot::magazine->SetIsShooting(false);
 }
 
 // Called when another command which requires one or more of the same
