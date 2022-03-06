@@ -93,7 +93,7 @@ void Auto5Ball::Execute() {
     case GETFIRSTBALL:
       Robot::intake->DeployIntake();
       Robot::magazine->SetIsDeployed(true);
-      Robot::shooter->SetShooterVelocity(3500, 150);
+      Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
       if(path1->processPath()) {
         autoStep = MOVETOFIRSTSHOOTPOSITION;
       }
@@ -106,7 +106,7 @@ void Auto5Ball::Execute() {
     break;
     case SHOOTFIRSTTWOBALLS:
       Robot::magazine->SetIsShooting(true);
-      if (Robot::shooter->SetShooterVelocity(3500, 150)) {
+      if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)) {
         Robot::magazine->SetIndexerPower(1);
       }
       if (Robot::magazine->GetBallCount() == 0 || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
@@ -120,7 +120,7 @@ void Auto5Ball::Execute() {
       }
     break;
     case MOVETOSHOOTTHIRDBALL:
-      Robot::shooter->SetShooterVelocity(4000, 150);
+      Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 150);
       if(path4->processPath()) {
         autoStep = SHOOTTHIRDBALL;
         autoOriginalTime = frc::Timer::GetFPGATimestamp();
@@ -128,7 +128,7 @@ void Auto5Ball::Execute() {
     break;
     case SHOOTTHIRDBALL:
       Robot::magazine->SetIsShooting(true);
-      if (Robot::shooter->SetShooterVelocity(4000, 150)) {
+      if (Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 150)) {
         Robot::magazine->SetIndexerPower(1);
       }
       if (Robot::magazine->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
@@ -148,14 +148,14 @@ void Auto5Ball::Execute() {
       }
     break;
     case MOVETOSHOOTFINALBALLS:
-      Robot::shooter->SetShooterVelocity(4000, 150);
+      Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 150);
       if (path6->processPath()) {
         autoStep = SHOOTFINALBALLS;
       }
     break;
     case SHOOTFINALBALLS:
       Robot::magazine->SetIsShooting(true);
-      if (Robot::shooter->SetShooterVelocity(4000, 150)) {
+      if (Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 150)) {
         Robot::magazine->SetIndexerPower(1); //shoot
       }
       if (Robot::magazine->GetBallCount() == 0) {
