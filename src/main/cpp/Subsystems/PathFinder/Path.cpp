@@ -404,9 +404,15 @@ int PathFinder::generatePath2(int idx)
             double sin_angle = sin(trajPoints[pathData.trajPointIdx].heading);
 
             //printf("\nheading=%f theta_offset=%f, cos=%f, sin=%f",m_Traj.segments[ti].heading,m_Splines[idx].theta_offset,cos_angle,sin_angle);
+            // 2022 - starting at 0,0 as our robot position so we'll want to scale things differently for showing up on the camera viewer.
+            // in 2020, we started in some other, strange position.  It would be good to have field reference positions on the display
+            // Ideally, outer limit of the screen represents the field perimeter.  Measurements in meters.
+            // Changed camera display to be 480 x 800 to match robot orientation better.  Using center of hub as 0,0 (240,145 on camera display)
+            // Scaling is such that the field width is no 480 pixels so scale by 8.28m is 480 pixels so a multiplier of 57.9
+            // We also found it looks better to use the same multiplier for both axes.
             if (!pathData.runRobot) // only send info to lidar viewer if we're not running the path.
-                LidarViewer::Get()->addPointXY((int)(trajPoints[pathData.trajPointIdx].x * -87.489),(int)(trajPoints[pathData.trajPointIdx].y * 104.98687),1); // lidarviewer has an 800 x 480 display area (9.144m x 4.572m).  plot x,y accordingly.
-            // printf("\nAdded (%d,%d)",(int)(m_Traj.segments[ti].x * -87.489),(int)(m_Traj.segments[ti].y * 104.98687));
+                LidarViewer::Get()->addPointXY((int)(240 - trajPoints[pathData.trajPointIdx].x * 57.9),(int)(145 - trajPoints[pathData.trajPointIdx].y * 57.9),1); // lidarviewer has an 800 x 480 display area (9.144m x 4.572m).  plot x,y accordingly.
+            printf("\nAdded (%d,%d)",(int)((240 - trajPoints[pathData.trajPointIdx].x * 57.9),(int)(145 - trajPoints[pathData.trajPointIdx].y * 57.9)));
 
             trajPoints[pathData.trajPointIdx].curLX = trajPoints[pathData.trajPointIdx].x + pathData.distanceBetweenWheels / 2 * sin_angle;
             trajPoints[pathData.trajPointIdx].curLY = trajPoints[pathData.trajPointIdx].y - pathData.distanceBetweenWheels / 2 * cos_angle;

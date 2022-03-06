@@ -35,7 +35,7 @@ class Auto5Ball
   PathFinder *path1;
   PathFinder *path2;
   PathFinder *path3;
-  PathFinder *path4;
+  PathFinder *path4,*path5,*path6;
   int autoStep = 0;
   double rVel = 0;
 	double lVel = 0;
