@@ -19,10 +19,10 @@
  * directly; this is crucially important, or else the decorator functions in
  * Command will *not* work!
  */
-class Auto5Ball
+class Auto2Ball
     : public frc::Command {
  public:
-  Auto5Ball();
+  Auto2Ball();
 
   void Initialize() override;
 
@@ -32,26 +32,18 @@ class Auto5Ball
 
   bool IsFinished() override;
   void Interrupted() override;
-  PathFinder *path1;
-  PathFinder *path2;
-  PathFinder *path3;
-  PathFinder *path4,*path5,*path6;
-  int autoStep = 0;
-  double rVel = 0;
-	double lVel = 0;
-  int cnt = 0;
-  bool done = false;
+  private:
+    PathFinder *path1;
+    PathFinder *path2;
+    int autoStep = 0;
+    double rVel = 0;
+    double lVel = 0;
+    int cnt = 0;
+    bool done = false;
 
-  enum {
-		GETFIRSTBALL,
-		MOVETOFIRSTSHOOTPOSITION,
-		SHOOTFIRSTTWOBALLS,
-		GRABTHIRDBALL,
-		MOVETOSHOOTTHIRDBALL,
-    SHOOTTHIRDBALL,
-    MOVETOGRABFINALBALLS,
-    DELAYTOGETFINABALLS,
-    MOVETOSHOOTFINALBALLS,
-    SHOOTFINALBALLS
-	};
+    enum {
+      BACKUPTOFIRSTBALL,
+      DRIVEFORWARDTOSHOOT,
+      SHOOT
+    };
 };

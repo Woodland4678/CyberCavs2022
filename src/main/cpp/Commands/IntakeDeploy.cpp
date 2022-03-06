@@ -25,10 +25,13 @@ IntakeDeploy::IntakeDeploy(): frc::Command() {
 // Called just before this Command runs the first time
 bool intakeDone = false;
 void IntakeDeploy::Initialize() {
-    Robot::intake->DeployIntake();
-    Robot::intake->SetPusherPower(0.8);
-    Robot::intake->SetRollerPower(0.8);
-    Robot::magazine->SetIsDeployed(true);
+    if (Robot::magazine->GetBallCount() < 2) {
+        Robot::intake->DeployIntake();
+        Robot::intake->SetPusherPower(0.8);
+        Robot::intake->SetRollerPower(0.8);
+        Robot::magazine->SetIsDeployed(true);
+    }
+    else intakeDone = false; //false means we are done and should life the intake
 }
 
 // Called repeatedly when this Command is scheduled to run

@@ -62,6 +62,8 @@ Magazine();
 
 	void SetIsShooting(bool setShootingStatus);
 
+	int GetBallCount();
+
 	enum {
 		WAITINGFIRSTBALL,
 		INDEXFIRSTBALL,
