@@ -164,7 +164,6 @@ bool Magazine::Index(){
 }
 
 
-// ball Count is not working
 int CheckBallStage=1;
 void Magazine::CheckNumberOfBallOut(){
      switch(CheckBallStage){
@@ -177,7 +176,7 @@ void Magazine::CheckNumberOfBallOut(){
             
         case 2:
             if(GetHighSensor()==false){ // high sensor sees the second ball
-                CheckBallStage==3;
+                CheckBallStage=3;
             }
 
             if (ballCount == 0){
