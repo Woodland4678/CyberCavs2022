@@ -33,8 +33,8 @@ void ShootHigh::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void ShootHigh::Execute() {
+    Robot::magazine->SetIsShooting(true);
     if(Robot::shooter->SetShooterVelocity(setSpeed, 150)){
-        Robot::magazine->SetIsShooting(true);
         Robot::magazine->SetIndexerPower(1);
         Robot::magazine->SetHopperPower(0.5);
     }

@@ -47,40 +47,40 @@ void Auto5Ball::Initialize() {
     // path4->addWayPoint(-6.858, 3.186, -450,0.007); 
     // path4->addWayPoint(-7.277, 2.261, -480,0.007); 
     // path4->makePath();
-    path1 = new PathFinder(3,2,0.4,0);
+    path1 = new PathFinder(3,2,0.4,1);
     path1->setStartPoint(-2.275,-0.674, -1.5); 
     //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-    path1->splineTo(1,-3.141,-0.674, 0, -2.2,-2.0,0,5000); //2.44, 0, 0 - meters
+    path1->splineTo(1,-3.141,-0.674, 0, -1.0,-1.0,0,5000); //2.44, 0, 0 - meters
 
-    path2 = new PathFinder(2.5,2.0,0.37,0);
+    path2 = new PathFinder(2.5,2.0,0.37,1);
     path2->setStartPoint(-3.141,-0.674, -1.5); 
-    path2->splineTo(1,-2.253,-0.441, 10,2.5,2.0,0,5000); //-3.248, 1.524
+    path2->splineTo(1,-2.253,-0.441, 10,1.5,1.0,0,5000); //-3.248, 1.524
     //path2->splineTo(2,-0.58, 2.013, 106.09,-2.0,-2.0,0,5000); //-3.810, 0.762, -180
     //path2->splineTo(3,-4.471, 1.904, -269.9,-2.0,-2.0,0,5000); //-4.571, 1.524, -269.9
     //path2->splineTo(4,-4.475, 4.858, -270,-3,-0.5,0,5000); //-4.575, 3.258, -270
 
-    path3 = new PathFinder(3,2,0.37,0);
+    path3 = new PathFinder(3,2,0.37,1);
     path3->setStartPoint(-2.253,-0.441, 8.5); 
-    path3->splineTo(1,-3.199,-1.452, 73.55,3,2.0,0,5000); 
-    path3->splineTo(2,-2.333,-2.688, 107.16,3,2.0,0,5000); 
+    path3->splineTo(1,-3.199,-1.452, 73.55,-1.5,-1.0,0,5000); 
+    path3->splineTo(2,-2.333,-2.688, 107.16,-1.5,-1.0,0,5000); 
     //path3->splineTo(2,-5.336, 2.162, -359.9,2.0,2.0,0,5000); 
     //path3->splineTo(3,-5.996, 2.162, -360,2.0,2.0,0,5000);
     //path3->splineTo(4,-6.358, 2.524, -449.9,2.0,2.0,0,5000);
     //path3->splineTo(5,-6.358, 5.986, -450,3,0.75,0,5000);
 
-    path4 = new PathFinder(2,2,0.37,0);
+    path4 = new PathFinder(2,2,0.37,1);
     path4->setStartPoint(-2.333,-2.688, 107.16); 
-    path4->splineTo(1,-2.134,-1.804, 41.76,3.5,2.0,0,5000); 
+    path4->splineTo(1,-2.134,-1.804, 41.76,1.5,1.0,0,5000); 
 
-    path5 = new PathFinder(2,2,0.37,0);
+    path5 = new PathFinder(2,2,0.37,1);
     path5->setStartPoint(-2.134,-1.804, 41.76); 
-    path5->splineTo(1,-2.408,-6.698,46.25,3.5,2.0,0,5000); 
+    path5->splineTo(1,-2.408,-6.698,46.25,-3.5,-2.0,0,5000); 
 
-    path6 = new PathFinder(2,2,0.37,0);
+    path6 = new PathFinder(2,2,0.37,1);
     path6->setStartPoint(-2.408,-6.698,46.25); 
     path6->splineTo(1,-2.134,-1.804, 41.76,3.5,2.0,0,5000); 
 
-    LidarViewer::Get()->m_numScoring = 0;
+    //LidarViewer::Get()->m_numScoring = 0;
     Robot::driveTrain->resetGyro();
     cnt = 0;
 
@@ -109,7 +109,7 @@ void Auto5Ball::Execute() {
       if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)) {
         Robot::magazine->SetIndexerPower(1);
       }
-      if (Robot::magazine->GetBallCount() == 0 || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
+      if (Robot::magazine->GetBallCount() == 0 && ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
         Robot::magazine->SetIsShooting(false);
         autoStep = GRABTHIRDBALL;
       }
@@ -122,7 +122,8 @@ void Auto5Ball::Execute() {
     case MOVETOSHOOTTHIRDBALL:
       Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 150);
       if(path4->processPath()) {
-        autoStep = SHOOTTHIRDBALL;
+        //autoStep = SHOOTTHIRDBALL;
+        done = true;
         autoOriginalTime = frc::Timer::GetFPGATimestamp();
       }
     break;
@@ -131,7 +132,7 @@ void Auto5Ball::Execute() {
       if (Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 150)) {
         Robot::magazine->SetIndexerPower(1);
       }
-      if (Robot::magazine->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
+      if (Robot::magazine->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
         autoStep = MOVETOGRABFINALBALLS;
       }
     break;
