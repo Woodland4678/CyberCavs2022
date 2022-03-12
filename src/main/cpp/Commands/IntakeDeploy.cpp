@@ -31,7 +31,7 @@ void IntakeDeploy::Initialize() {
         Robot::intake->SetPusherPower(0.8);
         Robot::intake->SetRollerPower(0.8);
         Robot::magazine->SetIsDeployed(true);
-        Robot::magazine->SetHopperPower(0.8);
+        Robot::magazine->SetHopperPower(-0.8);
     }
     else intakeDone = true; //false means we are done and should life the intake
 }

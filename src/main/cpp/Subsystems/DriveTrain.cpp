@@ -113,6 +113,14 @@ void DriveTrain::Periodic() {
     frc::SmartDashboard::PutNumber("Left Position",getLeftEncoder());
     frc::SmartDashboard::PutNumber("Right Position",getRightEncoder());
     // Put code here to be run every loop
+    ml_ValidTarget = limelight->GetNumber("tv",0.0);
+    if(ml_ValidTarget){
+        ml_targetHorizontial = limelight->GetNumber("tx",0.0);
+        ml_targetVertical = limelight->GetNumber("ty",0.0);
+
+        frc::SmartDashboard::PutNumber("Hor",ml_targetHorizontial);
+        frc::SmartDashboard::PutNumber("Ver",ml_targetVertical);
+    }
 
 }
 void DriveTrain::ShiftUp() {
@@ -173,12 +181,10 @@ void DriveTrain::setRightPosition(double encoder) {
 }
 
 void DriveTrain::SetRightPower(double pwr) {
-    if(!pTest)
-        rightDriveLeaderMotor.Set(-pwr);
+    rightDriveLeaderMotor.Set(-pwr);
 }
 void DriveTrain::SetLeftPower(double pwr) {
-    if(!pTest)
-        leftDriveLeaderMotor.Set(pwr);
+    leftDriveLeaderMotor.Set(pwr);
 }
 void DriveTrain::resetEncoders()
     {
