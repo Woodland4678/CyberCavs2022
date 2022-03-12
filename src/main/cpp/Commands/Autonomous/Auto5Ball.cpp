@@ -16,31 +16,32 @@ Auto5Ball::Auto5Ball(): frc::Command() {
 
 // Called when the command is initially scheduled.
 void Auto5Ball::Initialize() {
-  path1 = new PathFinder(3,2,0.4,1);
+  Robot::driveTrain->ShiftUp();
+  path1 = new PathFinder(1,1,0.71,1);
   path1->setStartPoint(-2.275,-0.674, -1.5); 
   //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-  path1->splineTo(1,-3.141,-0.674, 0, -1.0,-1.0,0,5000); //2.44, 0, 0 - meters
+  path1->splineTo(1,-3.141,-0.674, 0, -0.5,-0.1,0,5000); //2.44, 0, 0 - meters
   
 
-  path2 = new PathFinder(3,2,0.37,1);
+  path2 = new PathFinder(1,1,0.71,1);
   path2->setStartPoint(-3.141,-0.674, 0); 
-  path2->splineTo(1,-1.53,-0.352, 46.77,1.5,1.0,0,5000); 
+  path2->splineTo(1,-1.53,-0.352, 46.77,0.5,0.1,0,5000); 
 
-  path3 = new PathFinder(2,2,0.37,1);
+  path3 = new PathFinder(1,1,0.71,1);
   path3->setStartPoint(-1.53,-0.352, 46.77); 
-  path3->splineTo(1,-1.731,-2.207, 52.01,-1.5,-1.0,0,5000);
+  path3->splineTo(1,-1.731,-2.207, 52.01,-1.5,-0.5,0,5000);
 
-  path4 = new PathFinder(2,2,0.37,1);
+  path4 = new PathFinder(1,1,0.71,1);
   path4->setStartPoint(-1.723,-2.215, 52.01); 
-  path4->splineTo(1,-2.004,-2.575, 52.01,-1.5,-1.0,0,5000);
+  path4->splineTo(1,-2.004,-2.575, 52.01,-1.5,-0.5,0,5000);
 
-  path5 = new PathFinder(2,2,0.37,1);
+  path5 = new PathFinder(1,1,0.71,1);
   path5->setStartPoint(-2.004,-2.575, 52.01); 
-  path5->splineTo(1,-2.408,-6.698,46.25,-3.5,-2.0,0,5000); 
+  path5->splineTo(1,-2.408,-6.698,46.25,-1.5,-0.5,0,5000); 
 
-  path6 = new PathFinder(2,2,0.37,0);
+  path6 = new PathFinder(1,1,0.71,1);
   path6->setStartPoint(-2.408,-6.698,46.25); 
-  path6->splineTo(1,-2.134,-1.804, 41.76,3.5,2.0,0,5000);
+  path6->splineTo(1,-2.134,-1.804, 41.76,1.5,0.5,0,5000);
 
     /*path1 = new PathFinder(3,2,0.4,1);
     path1->setStartPoint(-2.275,-0.674, -1.5); 
@@ -80,9 +81,9 @@ auto autoOriginalTime = frc::Timer::GetFPGATimestamp();
 void Auto5Ball::Execute() {
     switch(autoStep) {
       case GETFIRSTBALL:
-        Robot::intake->DeployIntake();
-        Robot::magazine->SetIsDeployed(true);
-        Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
+       // Robot::intake->DeployIntake();
+        Robot::intake->SetIsDeployed(true);
+        //Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
         if(path1->processPath()) {
           autoStep++;
         }
@@ -99,12 +100,12 @@ void Auto5Ball::Execute() {
         }
       break;
       case SHOOTFIRSTTWOBALLS:
-        Robot::magazine->SetIsShooting(true);
+        Robot::intake->SetIsShooting(true);
         if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)) {
-          Robot::magazine->SetIndexerPower(0.5);
+          Robot::intake->SetIndexerPower(0.5);
         }
-        if (Robot::magazine->GetBallCount() == 0 && ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
-          Robot::magazine->SetIsShooting(false);
+        if (Robot::intake->GetBallCount() == 0 && ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
+          Robot::intake->SetIsShooting(false);
           autoStep = GRABTHIRDBALL;
         }
 
@@ -115,11 +116,11 @@ void Auto5Ball::Execute() {
         }
       break;
       case SHOOTTHIRDBALL:
-        Robot::magazine->SetIsShooting(true);
+        Robot::intake->SetIsShooting(true);
         if (Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 150)) {
-          Robot::magazine->SetIndexerPower(1);
+          Robot::intake->SetIndexerPower(1);
         }
-        if (Robot::magazine->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
+        if (Robot::intake->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
           autoStep = MOVETOGRABFINALBALLS;
         }
       break;
@@ -142,11 +143,11 @@ void Auto5Ball::Execute() {
         }
       break;
       case SHOOTFINALBALLS:
-        Robot::magazine->SetIsShooting(true);
+        Robot::intake->SetIsShooting(true);
         if (Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 150)) {
-          Robot::magazine->SetIndexerPower(1); //shoot
+          Robot::intake->SetIndexerPower(1); //shoot
         }
-        if (Robot::magazine->GetBallCount() == 0) {
+        if (Robot::intake->GetBallCount() == 0) {
           done = true;
           Robot::driveTrain->SetLeftPower(0);
           Robot::driveTrain->SetRightPower(0);

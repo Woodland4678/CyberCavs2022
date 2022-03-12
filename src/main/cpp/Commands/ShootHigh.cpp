@@ -33,10 +33,10 @@ void ShootHigh::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void ShootHigh::Execute() {
-    Robot::magazine->SetIsShooting(true);
+    Robot::intake->SetIsShooting(true);
     if(Robot::shooter->SetShooterVelocity(setSpeed, 150)){
-        Robot::magazine->SetIndexerPower(1);
-        Robot::magazine->SetHopperPower(0.5);
+        Robot::intake->SetIndexerPower(1);
+        Robot::intake->SetHopperPower(0.5);
     }
 
     /*double p = frc::SmartDashboard::GetNumber("Shooter P", 0.05);
@@ -62,10 +62,10 @@ bool ShootHigh::IsFinished() {
 
 // Called once after isFinished returns true
 void ShootHigh::End() {
-    Robot::magazine->SetHopperPower(0);
-    Robot::magazine->SetIndexerPower(0);
+    Robot::intake->SetHopperPower(0);
+    Robot::intake->SetIndexerPower(0);
     Robot::shooter->StopShooterMotor();
-    Robot::magazine->SetIsShooting(false);
+    Robot::intake->SetIsShooting(false);
 }
 
 // Called when another command which requires one or more of the same

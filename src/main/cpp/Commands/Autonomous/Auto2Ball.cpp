@@ -72,7 +72,7 @@ void Auto2Ball::Execute() {
     switch(autoStep) {
     case BACKUPTOFIRSTBALL:
       Robot::intake->DeployIntake();
-      Robot::magazine->SetIsDeployed(true);
+      Robot::intake->SetIsDeployed(true);
       Robot::shooter->SetShooterVelocity(3500, 150);
       if(path1->processPath()) {
         autoStep = DRIVEFORWARDTOSHOOT;
@@ -85,9 +85,9 @@ void Auto2Ball::Execute() {
     break;
     case SHOOT:
       if ( Robot::shooter->SetShooterVelocity(3500, 150)) {
-        Robot::magazine->SetIndexerPower(1);
+        Robot::intake->SetIndexerPower(1);
       }
-      if (Robot::magazine->GetBallCount() == 0) {
+      if (Robot::intake->GetBallCount() == 0) {
         done = true;
         Robot::intake->RetractIntake();
         Robot::shooter->StopShooterMotor();
