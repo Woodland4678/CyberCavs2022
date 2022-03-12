@@ -67,7 +67,7 @@ void Magazine::Periodic() {
     // Put code here to be run every loop
         //hopperMotor->Set(1);
         //if (isDeployed){
-        if (ballCount < 2) {
+        if (ballCount < 2 && !isShooting) {
             Index();        
         }    
         //}
@@ -172,6 +172,9 @@ bool Magazine::Index(){
 
 int CheckBallStage=1;
 void Magazine::CheckNumberOfBallOut(){
+    if (ballCount < 0) {
+        ballCount = 0;
+    }
     if (ballCount > 0) {
      switch(CheckBallStage){
         case 1:

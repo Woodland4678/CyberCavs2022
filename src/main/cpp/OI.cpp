@@ -44,6 +44,8 @@ driver_Btn5_LB.reset(new frc::JoystickButton(driverGamepad.get(), 5));
 driver_Btn5_LB->WhenPressed(new LowGear());
 driver_Btn6_RB.reset(new frc::JoystickButton(driverGamepad.get(), 6));
 driver_Btn6_RB->WhenPressed(new HighGear());
+driver_Btn7_LT.reset(new frc::JoystickButton(driverGamepad.get(), 7));
+driver_Btn7_LT->WhileHeld(new AutoAim());
 driver_Btn8_RT.reset(new frc::JoystickButton(driverGamepad.get(), 8));
 driver_Btn8_RT->WhileHeld(new ShootHigh());
 
