@@ -124,6 +124,12 @@ void Intake::Periodic() {
         if (isShooting){
             CheckNumberOfBallOut();
         }
+
+        if ((isDeployed) && (ballCount==1) && (indexStage == WAITINGFIRSTBALL)){
+            indexerMotor.Set(-0.5);
+            ballCount--; // ballCount == 0
+        }
+
     //detectedColour = m_ColourSensor.GetColor();
     //matchedColour = m_ColourMatcher.MatchClosestColor(detectedColour, m_Confidence);
     //m_Proximity = m_ColourSensor.GetProximity();
@@ -197,14 +203,16 @@ bool Intake::Index(){
             if(GetLowSensor() == false){  // when we see the ball
                 indexerMotor.Set(-1);
                 indexStage=INDEXFIRSTBALL;
-                ballCount++;
+                if (ballCount==0){
+                    ballCount++;
+                }
             }
             break;
 
         case INDEXFIRSTBALL: // index
-            if (GetLowSensor() == true){  // push the ball in until lowSensor can't see it
+            if (GetLowSensor() == true){  
                 ResetIndexerMotorPosition();
-                SetIndexerMotorPosition(positionFirstBall); // need to find the position
+                SetIndexerMotorPosition(positionFirstBall);  // move to position one
                 indexStage=ENSUREFIRSTBALLPOSITION;
             }
             break;
@@ -219,7 +227,7 @@ bool Intake::Index(){
 
         case WAITINGANDINDEXBOTHBALLS:
 
-            if(GetLowSensor() == false){  // when we see the bal
+            if(GetLowSensor() == false){  // when we see the ball
                 ResetIndexerMotorPosition();
                 SetIndexerMotorPosition(positionSecondBall);
                 indexStage=INDEXCOMPLETE;
@@ -253,7 +261,7 @@ void Intake::CheckNumberOfBallOut(){
             break;
             
         case 2:
-            if(GetHighSensor()==false){ // high sensor sees the second ball
+            if(GetHighSensor()==false){ // high sensor sees the second ball (only one ball left)
                 CheckBallStage=3;
             }
 
@@ -279,6 +287,8 @@ void Intake::CheckNumberOfBallOut(){
      }
     }
 }
+
+
 int Intake::GetBallCount() {
     return ballCount;
 }
