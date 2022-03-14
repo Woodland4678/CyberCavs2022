@@ -41,31 +41,17 @@ double rrpm = 0;
 double lrpm = 0;
 bool povButtonReleased = true;
 void Drive::Execute() {
-    /*frc::SmartDashboard::PutNumber("Higher Shooer Set RPM", higherShooterRPMSet);
-    frc::SmartDashboard::PutNumber("Lower Shooter Set RPM", lowerShooterRPMSet);
-    frc::SmartDashboard::PutNumber("Higher Shooer Actual RPM", Robot::shooter->TempGetHigherMotorActualRPM());
-    frc::SmartDashboard::PutNumber("Lower Shooter Actual RPM", Robot::shooter->TempGetLowerMotorActualRPM());
-    Robot::shooter->TempSetLowerShooterRPM(lowerShooterRPMSet);
-    Robot::shooter->TempSetHigherShooterRPM(higherShooterRPMSet);
-    if (Robot::oi->getDriverGamepad()->GetPOV() == 0 && povButtonReleased == true) {
-        lowerShooterRPMSet -= 100;
-        povButtonReleased = false;
+
+    //code to test the hood positions, will remove later
+    if (Robot::oi->getDriverGamepad()->GetPOV() == 90) {
+        Robot::shooter->SetHoodFarShot();
     }
-    else if (Robot::oi->getDriverGamepad()->GetPOV() == 180 && povButtonReleased == true) {
-        lowerShooterRPMSet += 100;
-        povButtonReleased = false;
+    else if (Robot::oi->getDriverGamepad()->GetPOV() == 180) {
+        Robot::shooter->SetHoodMediumShot();
     }
-    else if (Robot::oi->getDriverGamepad()->GetPOV() == 90 && povButtonReleased == true) {
-        higherShooterRPMSet += 100;
-        povButtonReleased = false;
+    else if (Robot::oi->getDriverGamepad()->GetPOV() == 270) {
+        Robot::shooter->SetHoodCloseShot();
     }
-    else if (Robot::oi->getDriverGamepad()->GetPOV() == 270 && povButtonReleased == true) {
-        higherShooterRPMSet -= 100;
-        povButtonReleased = false;
-    }
-    else if (Robot::oi->getDriverGamepad()->GetPOV() == -1) {
-        povButtonReleased = true;
-    }*/
     jx = Robot::oi->getDriverGamepad()->GetX();
     jy = Robot::oi->getDriverGamepad()->GetY();
 
