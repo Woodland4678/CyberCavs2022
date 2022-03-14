@@ -72,8 +72,8 @@ bool isShooting = false;
 
 int ballCount=0;
 double error=0;
-double positionFirstBall=9.929; 
-double positionSecondBall=11.9;
+double positionFirstBall=-9.929; 
+double positionSecondBall=-12.9;
 
 void Intake::Periodic() {
     if (isIntakeDeployed) {
@@ -195,7 +195,7 @@ bool Intake::Index(){
     switch(indexStage){
         case WAITINGFIRSTBALL: // waiting
             if(GetLowSensor() == false){  // when we see the ball
-                indexerMotor.Set(1);
+                indexerMotor.Set(-1);
                 indexStage=INDEXFIRSTBALL;
                 ballCount++;
             }

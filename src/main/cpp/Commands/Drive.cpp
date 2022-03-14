@@ -39,18 +39,29 @@ double jx = 0;
 double jy = 0;
 double rrpm = 0;
 double lrpm = 0;
+double setServoPos = 0;
 bool povButtonReleased = true;
 void Drive::Execute() {
 
     //code to test the hood positions, will remove later
+
     if (Robot::oi->getDriverGamepad()->GetPOV() == 90) {
         Robot::shooter->SetHoodFarShot();
+    }
+    else if (Robot::oi->getDriverGamepad()->GetPOV() == 0 && povButtonReleased == true) {
+        setServoPos += 0.05;
+        frc::SmartDashboard::PutNumber("servo pos",setServoPos);
+        Robot::shooter->SetServoPosition(setServoPos);
+        povButtonReleased = false;
     }
     else if (Robot::oi->getDriverGamepad()->GetPOV() == 180) {
         Robot::shooter->SetHoodMediumShot();
     }
     else if (Robot::oi->getDriverGamepad()->GetPOV() == 270) {
         Robot::shooter->SetHoodCloseShot();
+    }
+    else if (Robot::oi->getDriverGamepad()->GetPOV() == -1) {
+        povButtonReleased = true;
     }
     jx = Robot::oi->getDriverGamepad()->GetX();
     jy = Robot::oi->getDriverGamepad()->GetY();
