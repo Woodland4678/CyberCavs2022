@@ -17,31 +17,31 @@ Auto5Ball::Auto5Ball(): frc::Command() {
 // Called when the command is initially scheduled.
 void Auto5Ball::Initialize() {
   Robot::driveTrain->ShiftUp();
-  path1 = new PathFinder(1,1,0.71,1);
+  path1 = new PathFinder(2,1.5,0.71,1);
   path1->setStartPoint(-2.275,-0.674, -1.5); 
   //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-  path1->splineTo(1,-3.141,-0.674, 0, -0.5,-0.1,0,5000); //2.44, 0, 0 - meters
+  path1->splineTo(1,-3.441,-0.674, 0, -3,-1,0,5000); //2.44, 0, 0 - meters
   
 
   path2 = new PathFinder(1,1,0.71,1);
-  path2->setStartPoint(-3.141,-0.674, 0); 
-  path2->splineTo(1,-1.53,-0.352, 46.77,0.5,0.1,0,5000); 
+  path2->setStartPoint(-3.441,-0.674, 0); 
+  path2->splineTo(1,-1.53,-0.352, 46.77,3,0.3,0,5000); 
 
   path3 = new PathFinder(1,1,0.71,1);
   path3->setStartPoint(-1.53,-0.352, 46.77); 
-  path3->splineTo(1,-1.731,-2.207, 52.01,-1.5,-0.5,0,5000);
+  path3->splineTo(1,-2.081,-2.577, 63.01,-3,-0.5,0,5000);
 
   path4 = new PathFinder(1,1,0.71,1);
-  path4->setStartPoint(-1.723,-2.215, 52.01); 
-  path4->splineTo(1,-2.004,-2.575, 52.01,-1.5,-0.5,0,5000);
+  path4->setStartPoint(-2.081,-2.577, 62.01); 
+  path4->splineTo(1,-2.004,-2.875, 52.01,-2,-1,0,5000);
 
   path5 = new PathFinder(1,1,0.71,1);
-  path5->setStartPoint(-2.004,-2.575, 52.01); 
-  path5->splineTo(1,-2.408,-6.698,46.25,-1.5,-0.5,0,5000); 
+  path5->setStartPoint(-2.004,-2.875, 42.01); 
+  path5->splineTo(1,-2.408,-6.898,42.25,-2,-1,0,5000); 
 
   path6 = new PathFinder(1,1,0.71,1);
-  path6->setStartPoint(-2.408,-6.698,46.25); 
-  path6->splineTo(1,-2.134,-1.804, 41.76,1.5,0.5,0,5000);
+  path6->setStartPoint(-2.408,-6.898,46.25); 
+  path6->splineTo(1,-2.134,-1.804, 41.76,2,1,0,5000);
 
     /*path1 = new PathFinder(3,2,0.4,1);
     path1->setStartPoint(-2.275,-0.674, -1.5); 

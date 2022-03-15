@@ -126,7 +126,7 @@ void Intake::Periodic() {
         }
 
         if ((isDeployed) && (ballCount==1) && (indexStage == WAITINGFIRSTBALL)){
-            indexerMotor.Set(-0.5);
+            indexerMotor.Set(0.5);
             ballCount--; // ballCount == 0
         }
 

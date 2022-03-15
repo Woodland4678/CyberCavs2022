@@ -96,7 +96,7 @@ int hoodMoveToCloseState = 0;
 auto hoodMoveOriginalTime = 0_s;
 
 double ServoCloseAndFarShotPosition = 0.25;
-double ServoMediumShotPosition = 0.01;
+double ServoMediumShotPosition = 0.00;
 void Shooter::SetHoodFarShot() {
     hoodSolenoid->Set(false);
     SetServoPosition(ServoCloseAndFarShotPosition);
