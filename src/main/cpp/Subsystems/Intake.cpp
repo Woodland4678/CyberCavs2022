@@ -245,42 +245,40 @@ bool Intake::Index(){
     return false;
 }
 
-
-int CheckBallStage=1;
 void Intake::CheckNumberOfBallOut(){
     if (ballCount < 0) {
         ballCount = 0;
     }
     if (ballCount > 0) {
      switch(CheckBallStage){
-        case 1:
+        case CHECKFIRSTBALLSTATUS:
             if(GetHighSensor()==true){ // if highsensor can't see the ball anymore, the first ball is out
                 ballCount--;
-                CheckBallStage++;
+                CheckBallStage=CHECKREMAININGBALL;
             }
             break;
             
-        case 2:
+        case CHECKREMAININGBALL:
             if(GetHighSensor()==false){ // high sensor sees the second ball (only one ball left)
-                CheckBallStage=3;
+                CheckBallStage=CHECKSECONDBALLSTATUS;
             }
 
             if (ballCount == 0){
                 indexStage=WAITINGFIRSTBALL;
-                CheckBallStage=1;
+                CheckBallStage=CHECKFIRSTBALLSTATUS;
             }
 
             break;
 
         
-        case 3:
+        case CHECKSECONDBALLSTATUS:
             if(GetHighSensor()==true){ // if second ball is out
                 ballCount--;
             }
 
             if (ballCount == 0){
                 indexStage=WAITINGFIRSTBALL;
-                CheckBallStage=1;
+                CheckBallStage=CHECKFIRSTBALLSTATUS;
             }
 
             break;
