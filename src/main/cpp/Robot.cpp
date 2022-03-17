@@ -90,6 +90,11 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
+	if (oi->getOperatorGamepad()->GetRawButton(1)) {
+		intake->SetHopperPower(-0.8);
+		intake->SetIndexerPower(0.8);
+		intake->SetRollerPower(-0.8);
+	}
 }
 
 #ifndef RUNNING_FRC_TESTS
