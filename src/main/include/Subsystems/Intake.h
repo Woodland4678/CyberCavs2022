@@ -56,6 +56,8 @@ Intake();
 	void IntakeCargo();
 	void SetBallCount(int ballCnt);
 
+	int GetColourSensorProximity();
+
 	int GetAllianceColour();
 	void SetHopperPower(double power);
 	void SetIndexerPower(double power);
