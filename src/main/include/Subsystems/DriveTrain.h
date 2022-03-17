@@ -85,7 +85,7 @@ DriveTrain();
 	double getLimeHorizontial();
 	double getLimeVertical();
 	double calculateLimeDist();
-
+	bool GyroTurn(double current, double turnAmount, double p, double i, double d, double allowError);
 	//Advanced Control Functions
 	bool turnAmount(double degrees, int direction, double vel, double acc);
 	double mt_acc;

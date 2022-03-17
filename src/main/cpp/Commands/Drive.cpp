@@ -40,11 +40,23 @@ double jy = 0;
 double rrpm = 0;
 double lrpm = 0;
 double setServoPos = 0;
+double tempShooterRPM = 0;
 bool povButtonReleased = true;
 void Drive::Execute() {
-
+    /*Robot::shooter->SetShooterVelocity(tempShooterRPM, 100);
+    if (Robot::oi->getDriverGamepad()->GetPOV() == 0 && povButtonReleased == true) {
+        tempShooterRPM += 100;
+        povButtonReleased = false;
+    }
+    else if (Robot::oi->getDriverGamepad()->GetPOV() == 180 && povButtonReleased == true) {
+        tempShooterRPM -= 100;
+        povButtonReleased = false;
+    }
+     else if (Robot::oi->getDriverGamepad()->GetPOV() == -1) {
+        povButtonReleased = true;
+    }*/
     //code to test the hood positions, will remove later
-
+/*
     if (Robot::oi->getDriverGamepad()->GetPOV() == 90) {
         Robot::shooter->SetHoodFarShot();
     }
@@ -62,7 +74,7 @@ void Drive::Execute() {
     }
     else if (Robot::oi->getDriverGamepad()->GetPOV() == -1) {
         povButtonReleased = true;
-    }
+    }*/
     jx = Robot::oi->getDriverGamepad()->GetX();
     jy = Robot::oi->getDriverGamepad()->GetY();
 
@@ -87,6 +99,11 @@ void Drive::Execute() {
 
     Robot::driveTrain->SetLeftPower(lrpm);
     Robot::driveTrain->SetRightPower(rrpm);
+
+    if (Robot::intake->GetBallCount() > 1) {
+        Robot::shooter->SetShooterVelocity(3800, 100);
+        Robot::driveTrain->setLimeLED(true);
+    }
 }
 
 // Make this return true when this Command no longer needs to run execute()

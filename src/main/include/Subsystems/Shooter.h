@@ -44,7 +44,7 @@ Shooter();
 	void SetHoodHighGoal();
 	void SetHoodLowGoal();
 	void Shoot();
-	void SetPID(double  p, double i, double d);
+	void SetPID(double  p, double i, double d, double f);
 	void StopShooterMotor();
 	void SetServoPosition(float position);
 	void SetHoodFarShot();
@@ -59,6 +59,6 @@ enum {
     HOODCLOSESHOTPOSITION,
 	HOODMEDIUMSHOTPOSITION,
 	};
-int currentHoodPosition = HOODMEDIUMSHOTPOSITION; //medium position
+int currentHoodPosition = HOODFARSHOTPOSITION; //medium position
 };
 

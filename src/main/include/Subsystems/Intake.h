@@ -54,6 +54,7 @@ Intake();
 	void DeployIntake();
 	void RetractIntake();
 	void IntakeCargo();
+	void SetBallCount(int ballCnt);
 
 	int GetAllianceColour();
 	void SetHopperPower(double power);
@@ -90,6 +91,7 @@ Intake();
 	void SetIsShooting(bool setShootingStatus);
 
 	int GetBallCount();
+	int GetTotalCargoShot();
 
 	enum {
 		WAITINGFIRSTBALL,

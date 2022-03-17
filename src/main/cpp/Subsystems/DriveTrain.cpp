@@ -367,8 +367,53 @@ bool DriveTrain::turnAmount(double degrees, int direction, double vel, double ac
     }
     return false;
 }
+double gyroError = 0;
+bool DriveTrain::GyroTurn(double current, double turnAmount, double p, double i, double d, double allowError){
+	static double past = 0;
+	static double iValue = 0;
+	static int counter = 0;
+	// Never go more than 180 degrees in either direction with this function so make sure the step over 360 degrees is
+	// handled correctly.  eg at 270 , go to 10 error = 10 - 270 = -260, error should be 370 - 270 = 100 (-260 + 360)
+	// eg at 30 go to 300, error = 300 - 30 = 270, error should be 300 - 390 = -90 (270 - 360)
+	// so, error of less than -180 needs to be adjusted by +360
+	// error of more than +180 is adjusted by -360
+	gyroError = turnAmount - current;
+	if (gyroError < -180.0)
+		gyroError += 360.0;
+	if (gyroError > 180.0)
+		gyroError -= 360.0;
+	double pValue = p*gyroError;
+	iValue += i*(gyroError);
+	double dValue = d*(past - current);
+	double totalValue = pValue + iValue + dValue;
+
+	printf("Gyro: %f  tv = %f\n",current, totalValue);
+
+	if(totalValue > 0.8)
+		totalValue = 0.8;
+	if(totalValue < -0.8)
+		totalValue = -0.8;
+	totalValue *= 0.65;
+	SetRightPower(-totalValue);
+	SetLeftPower(totalValue);
 
 
+	past = current;
+	if ((std::abs(gyroError) < allowError)||((fabs(totalValue) < 0.05)&&(fabs(gyroError) < allowError))) {
+		counter++;
+	} else {
+		counter = 0;
+	}
+	if(counter >= 10){
+		past = 0;
+		iValue = 0;
+		counter = 0;
+		SetRightPower(0);
+		SetLeftPower(0);
+		return true;
+	}
+	return false;
+}
 void DriveTrain::initPath() {
     //pathState = 0;
 }
