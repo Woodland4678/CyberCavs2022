@@ -91,10 +91,21 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 	frc::Scheduler::GetInstance()->Run();
-	if (oi->getOperatorGamepad()->GetRawButton(1)) {
+	if (oi->getOperatorGamepad()->GetRawButton(1)) { //Reverse intake
 		intake->SetHopperPower(-0.8);
 		intake->SetIndexerPower(0.8);
 		intake->SetRollerPower(-0.8);
+	}
+
+	if (oi->getOperatorGamepad()->GetRawButton(8)) { // force shoot
+		shooter->SetHoodHighGoal();
+		if (shooter->SetShooterVelocity(4000, 150)){
+			intake->SetIndexerPower(-0.8);
+		}
+	}
+
+	if (oi->getOperatorGamepad()->GetRawButton(5)) { // Set ballCount = 0
+		intake->SetBallCount(0);
 	}
 }
 
