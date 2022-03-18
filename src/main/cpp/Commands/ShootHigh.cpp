@@ -48,7 +48,7 @@ void ShootHigh::Execute() {
         calculatedShooterSpeed = 4.2858 * targetVertical * targetVertical + 4.206434 * targetVertical + 3539.6577;
         Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100);
     }
-    if(Robot::driveTrain->autoAim(0) && !canShoot) {
+    if((Robot::driveTrain->autoAim(0) < 0.08) && !canShoot) {
         isAimedCount++;
     }
     else {

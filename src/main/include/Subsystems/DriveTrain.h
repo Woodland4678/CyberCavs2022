@@ -133,6 +133,9 @@ DriveTrain();
 
 	void resetEncoders();
 	void resetPosition();
+
+	
+
 	void setStart(double x, double y, double angle);
 	double rightRef,leftRef;
 	int prevEncRight,prevEncLeft;

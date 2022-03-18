@@ -67,28 +67,33 @@ frc::Color matchedColour;
 bool isIntakeDeployed = false;
 bool wrongBallDetected = false;
 int reverseIntakeCount = 0;
-bool isDeployed = false;
 bool isShooting = false;
 
 int ballCount=0;
 int totalCargoShot = 0;
 double error=0;
 double positionFirstBall=-10.189; 
-double positionSecondBall=-12.7;
+double positionSecondBall=-12.1;
 
 int ballCounterState = 0;
 int ballShotState = 0;
 
 void Intake::Periodic() {
+    if (ballCount < 0) {
+        ballCount = 0;
+    }
     switch (ballCounterState) {
         case 0:
-            if (lowSensor.get() == false) {
+            if (!GetLowSensor()) {
                 ballCount++;
                 ballCounterState++;
+                if (ballCount > 2) {
+                    ballCount = 2;
+                }
             }
         break;
         case 1:
-            if (lowSensor.get()) {
+            if (GetLowSensor()) {
                 ballCounterState = 0;
             }
         break;
@@ -108,22 +113,22 @@ void Intake::Periodic() {
         break;
     }
     if (isIntakeDeployed) {
-        if (m_Proximity > 300) {
+        if (colourSensor.GetProximity0() > 300) {
             if (GetAllianceColour() == 0) { //on Red alliance
-                // if (detectedColour.blue > 0.4 && detectedColour.red < 0.3) {
-                //     wrongBallDetected = true;
-                // }
-                if (detectedColour.blue > detectedColour.red) {
-                     wrongBallDetected = true;
-                 }
+                if (detectedColour.blue > 0.4 && detectedColour.red < 0.3) {
+                    //wrongBallDetected = true;
+                }
+                // if (colourSensor.GetRawColor0().blue > colourSensor.GetRawColor0().red) {
+                //      wrongBallDetected = true;
+                //  }
             }
             else if (GetAllianceColour() == 1) { //on Blue alliance
-                // if (detectedColour.red > 0.4 && detectedColour.blue < 0.3) {
-                //     wrongBallDetected = true;
-                // }
-                if (detectedColour.red > detectedColour.blue) {
-                     wrongBallDetected = true;
+                if (detectedColour.red > 0.4 && detectedColour.blue < 0.3) {
+                    //wrongBallDetected = true;
                 }
+                // if (colourSensor.GetRawColor0().red > colourSensor.GetRawColor0().blue) {
+                //      wrongBallDetected = true;
+                // }
             }
         }
     }
@@ -144,40 +149,44 @@ void Intake::Periodic() {
             wrongBallDetected = false;
         }
     }
-    if (ballCount == 0) {
-        indexStage = WAITINGFIRSTBALL;
-    }
     frc::SmartDashboard::PutNumber("Index Stage", indexStage);
     frc::SmartDashboard::PutNumber("Indexer Position", GetIndexerMotorPosition());
     frc::SmartDashboard::PutNumber("Ball Count", ballCount);
     frc::SmartDashboard::PutNumber("Balls Shot",  totalCargoShot);
     // Put code here to be run every loop
         //hopperMotor->Set(1);
-        //if (isDeployed){
-        if (ballCount < 2 && !isShooting) {
+        if ((isIntakeDeployed) && (ballCount==1) && (indexStage == FINISH)){
+            indexerMotor.Set(0.5);
+            ballCount--; // ballCount == 0
+            indexStage = WAITINGFIRSTBALL;
+        }
+
+        
+        //if (ballCount < 2 && !isShooting) {
+            
+        if (!isShooting) { 
             Index();        
         }    
-        if (ballCount == 2) {
-            hopperMotor->Set(0);
+        if (ballCount == 0) {
+            indexStage = WAITINGFIRSTBALL;
         }
+        // if (ballCount == 2) {
+        //     hopperMotor->Set(0);
+        // }
         //}
 
         if (isShooting){
             //CheckNumberOfBallOut();
         }
 
-        if ((isDeployed) && (ballCount==1) && (indexStage == WAITINGFIRSTBALL)){
-            indexerMotor.Set(0.5);
-            ballCount--; // ballCount == 0
-        }
-
+        
     //detectedColour = m_ColourSensor.GetColor();
     //matchedColour = m_ColourMatcher.MatchClosestColor(detectedColour, m_Confidence);
     //m_Proximity = m_ColourSensor.GetProximity();
-    //frc::SmartDashboard::PutNumber("Detected Colour R", colourSensor.GetRawColor0().red);
-    //frc::SmartDashboard::PutNumber("Detected Colour G", detectedColour.green);
-    //frc::SmartDashboard::PutNumber("Detected Colour B", detectedColour.blue);
-    //frc::SmartDashboard::PutNumber("Color Sensor Proximity", m_Proximity);
+    frc::SmartDashboard::PutNumber("Detected Colour R", colourSensor.GetRawColor0().red);
+    frc::SmartDashboard::PutNumber("Detected Colour G", detectedColour.green);
+    frc::SmartDashboard::PutNumber("Detected Colour B", detectedColour.blue);
+    frc::SmartDashboard::PutNumber("Color Sensor Proximity", m_Proximity);
     // Put code here to be run every loop
 
 }
@@ -185,6 +194,9 @@ int Intake::GetAllianceColour() {
     return frc::DriverStation::GetInstance().GetAlliance();
 }
 void Intake::DeployIntake() {
+    // if (ballCount == 1) {
+    //     indexStage = WAITINGANDINDEXBOTHBALLS;
+    // }
     isIntakeDeployed = true;
     deploySolenoid->Set(true);
 }
@@ -229,10 +241,10 @@ void Intake::SetIndexerMotorPosition(double position){
 }
 
 void Intake::SetIsDeployed(bool setDeployStatus){
-    isDeployed = setDeployStatus;
+    isIntakeDeployed = setDeployStatus;
 }
 bool Intake::GetIsDeployed(){
-   return isDeployed;
+   return isIntakeDeployed;
 }
 int Intake::GetColourSensorProximity() {
     return colourSensor.GetProximity0();
@@ -240,6 +252,7 @@ int Intake::GetColourSensorProximity() {
 void Intake::SetIsShooting(bool setShootingStatus){
     isShooting = setShootingStatus;
 }
+auto indexTimer = 0_s;
 bool Intake::Index(){
     switch(indexStage){
         case WAITINGFIRSTBALL: // waiting
@@ -274,13 +287,21 @@ bool Intake::Index(){
                 ResetIndexerMotorPosition();
                 SetIndexerMotorPosition(positionSecondBall);
                 indexStage=INDEXCOMPLETE;
+                indexTimer = frc::Timer::GetFPGATimestamp();
                 //ballCount++;
             }
             break;
 
         case INDEXCOMPLETE: // done
-            isDeployed=false;
-            indexStage=WAITINGFIRSTBALL;
+            if(frc::Timer::GetFPGATimestamp() - indexTimer > 0.5_s) {
+                SetHopperPower(0);
+                isIntakeDeployed=false;
+                indexStage = FINISH;
+                //indexStage=WAITINGFIRSTBALL;
+                
+            }
+        break;
+        case FINISH:
             return true;
         break;
     }

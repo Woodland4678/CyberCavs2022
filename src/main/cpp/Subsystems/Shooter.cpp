@@ -113,7 +113,7 @@ void Shooter::SetHoodCloseShot() {
                 hoodMoveToCloseState++;
             break;
             case 1:
-                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.3_s) {
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
                     hoodMoveToCloseState++;
                 }
             break;
@@ -123,7 +123,7 @@ void Shooter::SetHoodCloseShot() {
                 hoodMoveToCloseState++;
             break;
             case 3:
-                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.3_s) {
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
                     hoodMoveToCloseState++;
                 }
             break;
@@ -149,7 +149,7 @@ void Shooter::SetHoodMediumShot() {
             hoodMoveToMediumState++;
         break;
         case 1:
-            if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.3_s) {
+            if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
                 hoodMoveToMediumState++;
                 
             }
@@ -160,7 +160,7 @@ void Shooter::SetHoodMediumShot() {
             hoodMoveToMediumState++;
         break;
         case 3:
-            if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.3_s) {
+            if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
                 hoodMoveToMediumState++;
                 shooterPositionServo->SetDisabled();
             }

@@ -489,6 +489,7 @@ bool DriveTrain::testPath() {
     return false;*/
 }
 
+
 //-------------------------------------------Auto Controls--------------------------------------------
 double DriveTrain::autoAim(double target){
     double error = 0;
@@ -532,6 +533,7 @@ double DriveTrain::autoAim(double target){
 		setLeftPower(0);
 		return true;
 	}*/
+    frc::SmartDashboard::PutNumber("autoaim error",error);
 	return error;
 }
 #pragma endregion

@@ -42,11 +42,11 @@ void Auto5Ball::Initialize() {
 
   path5 = new PathFinder(2,1,0.71,1);
   path5->setStartPoint(0,0,0); 
-  path5->splineTo(1,-3.8,-1.4, -10,-4,-1,5,5000); //-2.5 
+  path5->splineTo(1,-3.85,-1.75, 20,-4,-1,5,5000); //-2.5 
 
-  path6 = new PathFinder(4.5,1,0.71,1);
+  path6 = new PathFinder(3,1,0.71,1);
   path6->setStartPoint(0,0,0); 
-  path6->splineTo(1,2.5,0,20,4.5,2,0,5000);
+  path6->splineTo(1,3.2,0.5,10,3,2,0,5000);
 
     /*path1 = new PathFinder(3,2,0.4,1);
     path1->setStartPoint(-2.275,-0.674, -1.5); 
@@ -78,6 +78,7 @@ void Auto5Ball::Initialize() {
     //LidarViewer::Get()->m_numScoring = 0;
     Robot::driveTrain->resetGyro();
     cnt = 0;
+    //autoStep = MOVETOSHOOTFINALBALLS;
 
 }
 
@@ -107,7 +108,7 @@ void Auto5Ball::Execute() {
         }
       break;
       case FIRSTGYROTURN:
-        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), 49, 0.013, 0, 0, 2.5)) {
+        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), 46, 0.017, 0, 0, 1.8)) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
         }
@@ -128,7 +129,7 @@ void Auto5Ball::Execute() {
         }
       break;
       case FIRSTAUTOAIM:
-        if (Robot::driveTrain->autoAim(0)) {
+        if (Robot::driveTrain->autoAim(0) < 0.1) {
           autoStep = SHOOTFIRSTTWOBALLS;
           autoOriginalTime = frc::Timer::GetFPGATimestamp();
         }
@@ -138,8 +139,8 @@ void Auto5Ball::Execute() {
           stopDrivingBack = true;
         }
         if (!stopDrivingBack) {
-          Robot::driveTrain->SetLeftPower(0.045);
-          Robot::driveTrain->SetRightPower(0.045);
+          Robot::driveTrain->SetLeftPower(0.06);
+          Robot::driveTrain->SetRightPower(0.06);
         }
         else {
           Robot::driveTrain->SetLeftPower(0);
@@ -150,15 +151,20 @@ void Auto5Ball::Execute() {
           Robot::intake->SetIsDeployed(true);
           Robot::intake->SetRollerPower(0.9);
           Robot::intake->SetPusherPower(0.9);
-          Robot::intake->SetHopperPower(0.9);
+          Robot::intake->SetHopperPower(1);
         }
         
         if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)) {
           Robot::intake->SetIsShooting(true);
-          Robot::intake->SetIndexerPower(-0.4);
+          if (Robot::intake->GetTotalCargoShot() >= 2) {
+            Robot::intake->SetIndexerPower(-1);
+          }
+          else {
+            Robot::intake->SetIndexerPower(-0.4);
+          }
         }
         //if (Robot::intake->GetBallCount() == 0 && ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2.8_s)) {
-        if (Robot::intake->GetTotalCargoShot() > 3) {
+        if (Robot::intake->GetTotalCargoShot() > 2) {
           Robot::intake->SetIsShooting(false);
           autoStep = MOVETOGRABFINALBALLS;
         }
@@ -176,7 +182,7 @@ void Auto5Ball::Execute() {
         if (Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 50)) {
           Robot::intake->SetIndexerPower(-1);
         }
-        if (Robot::intake->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 2_s)) {
+        if (Robot::intake->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
           autoStep = MOVETOGRABFINALBALLS;
           Robot::intake->SetIndexerPower(0);
           Robot::intake->SetBallCount(0);
@@ -190,26 +196,38 @@ void Auto5Ball::Execute() {
       
       break;
       case DELAYTOGETFINABALLS:
-        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2_s) {
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.5_s) {
           autoStep= MOVETOSHOOTFINALBALLS;
         }
       break;
       case MOVETOSHOOTFINALBALLS:
-        Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 150);
+        Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50);
         if (path6->processPath()) {
-          autoStep = SHOOTFINALBALLS;
+          autoStep = FINALAUTOAIM;
           Robot::driveTrain->setLimeLED(true);
+          isAimedAutoCount = 0;
         }
       break;
       case FINALAUTOAIM:
-        if (Robot::driveTrain->autoAim(0)) {
+        if (Robot::driveTrain->autoAim(0) < 0.05) {
+          isAimedAutoCount++;
+          
+        }
+        else {
+          isAimedAutoCount = 0;
+        }
+        if (isAimedAutoCount > 20) {
           autoStep = SHOOTFINALBALLS;
+          Robot::driveTrain->SetRightPower(0);
+          Robot::driveTrain->SetLeftPower(0);
         }
       break;
       case SHOOTFINALBALLS:
+        Robot::driveTrain->autoAim(0);
         Robot::intake->SetIsShooting(true);
-        if (Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 150)) {
-          Robot::intake->SetIndexerPower(-0.4); //shoot
+        Robot::intake->SetHopperPower(0.8);
+        if (Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50)) {
+          Robot::intake->SetIndexerPower(-0.2); //shoot
         }
         if (Robot::intake->GetBallCount() == 0) {
           done = true;
