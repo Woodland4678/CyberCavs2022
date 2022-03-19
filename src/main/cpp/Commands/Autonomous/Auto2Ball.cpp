@@ -63,19 +63,21 @@ void Auto2Ball::Initialize() {
     LidarViewer::Get()->m_numScoring = 0;
     Robot::driveTrain->resetGyro();
     cnt = 0;
+    Robot::shooter->SetHoodFarShot();
 
 }
 
 // Called repeatedly when this Command is scheduled to run
 auto auto2BallOriginalTime = frc::Timer::GetFPGATimestamp();
+int autoAimCnt = 0;
 void Auto2Ball::Execute() {
     switch(autoStep) {
     case BACKUPTOFIRSTBALL:
       Robot::intake->DeployIntake();
       Robot::intake->SetIsDeployed(true);
-      Robot::shooter->SetShooterVelocity(3500, 150);
+      Robot::shooter->SetShooterVelocity(3800, 150);
       if(path1->processPath()) {
-        autoStep = DRIVEFORWARDTOSHOOT;
+        autoStep = AUTOAIM;
       }
     break;
     case DRIVEFORWARDTOSHOOT:
@@ -83,9 +85,20 @@ void Auto2Ball::Execute() {
         autoStep = SHOOT;
       }
     break;
+    case AUTOAIM:
+      if (Robot::driveTrain->autoAim(0) < 0.05) {
+        autoAimCnt++;
+      }
+      else {
+        autoAimCnt = 0;
+      }
+      if (autoAimCnt > 10) {
+        autoStep = SHOOT;
+      }
+    break;
     case SHOOT:
-      if ( Robot::shooter->SetShooterVelocity(3500, 150)) {
-        Robot::intake->SetIndexerPower(1);
+      if ( Robot::shooter->SetShooterVelocity(3800, 150)) {
+        Robot::intake->SetIndexerPower(-0.4);
       }
       if (Robot::intake->GetBallCount() == 0) {
         done = true;

@@ -36,7 +36,7 @@ int Climb::getDriverPOV()
 // Called just before this Command runs the first time
 void Climb::Initialize() {
     m_originalTime = frc::Timer::GetFPGATimestamp();
-    Robot::climber->OpenFile();
+    //Robot::climber->OpenFile();
 }
 
 int count = 0;
@@ -67,7 +67,7 @@ void Climb::Execute() {
 bool Climb::IsFinished() {
     if (Robot::oi->getDriverGamepad()->GetPOV() == 270)
         {
-        Robot::climber->CloseFile();
+        //Robot::climber->CloseFile();
         return true;
         }
     else

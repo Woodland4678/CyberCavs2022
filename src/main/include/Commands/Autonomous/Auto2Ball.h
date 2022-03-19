@@ -44,6 +44,7 @@ class Auto2Ball
     enum {
       BACKUPTOFIRSTBALL,
       DRIVEFORWARDTOSHOOT,
+      AUTOAIM,
       SHOOT
     };
 };

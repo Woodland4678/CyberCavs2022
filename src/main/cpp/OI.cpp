@@ -40,6 +40,8 @@ driver_Btn2_A.reset(new frc::JoystickButton(driverGamepad.get(), 2));
 driver_Btn2_A->WhenPressed(new IntakeDeploy());
 driver_Btn3_B.reset(new frc::JoystickButton(driverGamepad.get(), 3));
 driver_Btn3_B->WhenPressed(new IntakeRetract());
+driver_Btn4_Y.reset(new frc::JoystickButton(driverGamepad.get(), 4));
+driver_Btn4_Y->WhileHeld(new ShootLow());
 driver_Btn5_LB.reset(new frc::JoystickButton(driverGamepad.get(), 5));
 driver_Btn5_LB->WhenPressed(new LowGear());
 driver_Btn6_RB.reset(new frc::JoystickButton(driverGamepad.get(), 6));

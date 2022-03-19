@@ -229,13 +229,13 @@ enum {
 
 void Climber::OpenFile()
     {
-    fpt = fopen("/media/sda1/test.txt","w"); // Open file for logging.
+    //fpt = fopen("/media/sda1/test.txt","w"); // Open file for logging.
     }
 
 void Climber::CloseFile()
     {
-    fputs("The End\n",fpt);
-    fclose(fpt);
+    //fputs("The End\n",fpt);
+    //fclose(fpt);
     climbState = 0;
     }
 
@@ -265,7 +265,7 @@ void Climber::Climb(){
     //pov = Robot::oi->getDriverGamepad()->GetPOV();
     if (prevpov != pov)
         {
-        fprintf(fpt,"POV Change %d to %d\n",prevpov,pov);
+        //fprintf(fpt,"POV Change %d to %d\n",prevpov,pov);
         }
 switch(climbState)
     {
@@ -910,7 +910,7 @@ bool Climber::adjustVelocity() // Make speed adjustments according to the global
         if (timeToDecel >= timeToTarget)
             {
             climbVelocityState = 1; // We need to decelerate now.  Best to go immediately to deceleration.  We need to start doing that now in order to reach minVelocity.
-            fprintf(fpt,"Declerating\n");
+            //fprintf(fpt,"Declerating\n");
             }
         else // No need to declerate yet.  Accelerate as needed till we reach the "maintain Velocity."
             {
@@ -948,7 +948,7 @@ bool Climber::adjustVelocity() // Make speed adjustments according to the global
             climbVelocityState = 0;  // Set this to 0 in case someone forgets to do that before starting calls to adjustVelocity();
             }
         }
-    fprintf(fpt,"vel=%f/%f, pos=%f, targ=%f accel=%f decl=%f min=%f max=%f diffTime=%f direction=%f, TTD=%f, TTT=%f\n",climbVelocity,GetClimberSpeed(),GetClimberPosition(),climbTargetPosition,climbAccel,climbDecel,climbMinVelocity,climbMaxVelocity,diffTime,direction,timeToDecel,timeToTarget);
+    //fprintf(fpt,"vel=%f/%f, pos=%f, targ=%f accel=%f decl=%f min=%f max=%f diffTime=%f direction=%f, TTD=%f, TTT=%f\n",climbVelocity,GetClimberSpeed(),GetClimberPosition(),climbTargetPosition,climbAccel,climbDecel,climbMinVelocity,climbMaxVelocity,diffTime,direction,timeToDecel,timeToTarget);
     return(rval); // Returns True when target position has been reached.
     }
 
