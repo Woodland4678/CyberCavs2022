@@ -69,7 +69,7 @@ void Climb::Execute() {
 bool Climb::IsFinished() {
     if (Robot::oi->getDriverGamepad()->GetPOV() == 270)
         {
-        Robot::climber->CloseFile();
+        //Robot::climber->CloseFile();
         return true;
         }
     else

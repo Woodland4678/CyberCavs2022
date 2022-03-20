@@ -42,9 +42,9 @@ class Auto5Ball
   int cnt = 0;
   bool done = false;
 
-  double shooterSpeedFirstTwoBalls = 3525;
-  double shooterSpeedThirdBall = 3525;
-  double shooterSpeedFinalBalls = 4000;
+  double shooterSpeedFirstTwoBalls = 3700;
+  double shooterSpeedThirdBall = 3750;
+  double shooterSpeedFinalBalls = 3800;
 
   enum {
 		GETFIRSTBALL,

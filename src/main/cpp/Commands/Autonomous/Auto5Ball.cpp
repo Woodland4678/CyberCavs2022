@@ -11,9 +11,11 @@
 
 Auto5Ball::Auto5Ball(): frc::Command() {
   Requires(Robot::driveTrain.get());
+  Requires(Robot::shooter.get());
   // Use addRequirements() here to declare subsystem dependencies.
 }
-
+double calculatedAutoShooterSpeed = 0;
+double autoTargetVertical = 0;
 // Called when the command is initially scheduled.
 void Auto5Ball::Initialize() {
   Robot::driveTrain->ShiftUp();
@@ -36,13 +38,13 @@ void Auto5Ball::Initialize() {
   // path3->splineTo(1,-2.623,-1.400, -50, 2,2,0,5000);
   // path3->splineTo(1,-2.0,-2.515, -50, 2,0.3,0,5000);
 
-  path4 = new PathFinder(1,1,0.71,0);
-  path4->setStartPoint(0,0,0); 
-  path4->splineTo(1,-0.5,0, 0,-2,-1,0,5000);
+  // path4 = new PathFinder(1,1,0.71,0);
+  // path4->setStartPoint(0,0,0); 
+  // path4->splineTo(1,-0.5,0, 0,-2,-1,0,5000);
 
   path5 = new PathFinder(2,1,0.71,1);
   path5->setStartPoint(0,0,0); 
-  path5->splineTo(1,-3.85,-1.75, 20,-4,-1,5,5000); //-2.5 
+  path5->splineTo(1,-3.85,-1.8, 20,-4,-1,5,5000); //-2.5 
 
   path6 = new PathFinder(3,1,0.71,1);
   path6->setStartPoint(0,0,0); 
@@ -85,7 +87,7 @@ void Auto5Ball::Initialize() {
 // Called repeatedly when this Command is scheduled to run
 int isAimedAutoCount = 0;
 bool stopDrivingBack = false;
-auto autoOriginalTime = frc::Timer::GetFPGATimestamp();
+auto autoOriginalTime = 0_s;
 void Auto5Ball::Execute() {
     if (Robot::intake->GetBallCount() > 1) {
       Robot::intake->RetractIntake();
@@ -96,6 +98,7 @@ void Auto5Ball::Execute() {
     }
     switch(autoStep) {
       case GETFIRSTBALL:
+        Robot::shooter->SetHoodMediumShot();
         Robot::intake->DeployIntake();
         Robot::intake->SetIsDeployed(true);
         Robot::intake->SetIsShooting(false);
@@ -105,15 +108,23 @@ void Auto5Ball::Execute() {
         
         if(path1->processPath()) {
           autoStep = FIRSTGYROTURN;
+          autoOriginalTime = frc::Timer::GetFPGATimestamp();
         }
       break;
       case FIRSTGYROTURN:
-        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), 46, 0.017, 0, 0, 1.8)) {
+        Robot::shooter->SetHoodMediumShot();
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2.5_s) {
+          autoStep = DRIVETOFIRSTSHOOT;
+          Robot::driveTrain->setLimeLED(true);
+        }
+        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), 47.5, 0.017, 0, 0, 1.8)) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
         }
       break;
       case DRIVETOFIRSTSHOOT:
+        Robot::shooter->SetHoodMediumShot();
+        Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
         if(path3->processPath()) {
           //done = true;
           autoStep = TURNTOTARGET;
@@ -121,8 +132,12 @@ void Auto5Ball::Execute() {
         }
       break;
       case TURNTOTARGET:
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2_s) {
+          autoStep = FIRSTAUTOAIM;
+          //Robot::driveTrain->setLimeLED(true);
+        }
         Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
-        Robot::driveTrain->setLimeLED(true);
+        //Robot::driveTrain->setLimeLED(true);
         if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), -60, 0.011, 0,0, 6)) {
           autoStep = FIRSTAUTOAIM;
           
@@ -158,6 +173,7 @@ void Auto5Ball::Execute() {
           Robot::intake->SetIsShooting(true);
           if (Robot::intake->GetTotalCargoShot() >= 2) {
             Robot::intake->SetIndexerPower(-1);
+            shooterSpeedFirstTwoBalls = shooterSpeedThirdBall;
           }
           else {
             Robot::intake->SetIndexerPower(-0.4);
@@ -184,6 +200,7 @@ void Auto5Ball::Execute() {
         }
         if (Robot::intake->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
           autoStep = MOVETOGRABFINALBALLS;
+          
           Robot::intake->SetIndexerPower(0);
           Robot::intake->SetBallCount(0);
         }
@@ -198,9 +215,12 @@ void Auto5Ball::Execute() {
       case DELAYTOGETFINABALLS:
         if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.5_s) {
           autoStep= MOVETOSHOOTFINALBALLS;
+          
         }
+        Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50);
       break;
       case MOVETOSHOOTFINALBALLS:
+        Robot::shooter->SetHoodFarShot();
         Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50);
         if (path6->processPath()) {
           autoStep = FINALAUTOAIM;
@@ -209,6 +229,8 @@ void Auto5Ball::Execute() {
         }
       break;
       case FINALAUTOAIM:
+        autoTargetVertical = Robot::driveTrain->getLimeVertical();
+        calculatedAutoShooterSpeed = 4.2858 * autoTargetVertical * autoTargetVertical + 4.206434 * autoTargetVertical + 3539.6577;
         if (Robot::driveTrain->autoAim(0) < 0.05) {
           isAimedAutoCount++;
           
@@ -226,8 +248,8 @@ void Auto5Ball::Execute() {
         Robot::driveTrain->autoAim(0);
         Robot::intake->SetIsShooting(true);
         Robot::intake->SetHopperPower(0.8);
-        if (Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50)) {
-          Robot::intake->SetIndexerPower(-0.2); //shoot
+        if (Robot::shooter->SetShooterVelocity(calculatedAutoShooterSpeed, 50)) {
+          Robot::intake->SetIndexerPower(-0.4); //shoot
         }
         if (Robot::intake->GetBallCount() == 0) {
           done = true;

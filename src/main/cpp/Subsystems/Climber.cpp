@@ -261,7 +261,7 @@ enum {
 
 void Climber::OpenFile()
     {
-    fpt = fopen("/media/sda1/test.txt","w"); // Open file for logging.
+    //fpt = fopen("/media/sda1/test.txt","w"); // Open file for logging.
     }
 
 void Climber::CloseFile()

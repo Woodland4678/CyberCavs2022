@@ -40,6 +40,14 @@ AddChild("ShooterPositionServo", shooterPositionServo);
     shooterPidController.SetI(0.000001, 0);
     shooterPidController.SetD(0.003, 0);
     shooterPidController.SetFF(0.000002, 0);
+
+    shooterPidController.SetP(0.0001, 1);
+    shooterPidController.SetI(0.0, 1);
+    shooterPidController.SetD(0.0, 1);
+    shooterPidController.SetFF(0.0, 1);
+
+    
+
     shooterPidController.SetOutputRange(-1, 1);
 }
 
@@ -58,8 +66,8 @@ void Shooter::Periodic() {
 }
 
 int shooterSpeeedUpCount = 0;
-bool Shooter::SetShooterVelocity(double velocity, double shooterError=150) {
-    shooterPidController.SetReference(velocity, rev::ControlType::kVelocity);
+bool Shooter::SetShooterVelocity(double velocity, double shooterError=150, int slot) {
+    shooterPidController.SetReference(velocity, rev::ControlType::kVelocity, slot);
     if (abs(shooterEncoder.GetVelocity()-velocity)<=shooterError){
         shooterSpeeedUpCount++;
         if (shooterSpeeedUpCount>=8){
@@ -96,10 +104,10 @@ int hoodMoveToMediumState = 0;
 int hoodMoveToCloseState = 0;
 auto hoodMoveOriginalTime = 0_s;
 
-double ServoCloseAndFarShotPosition = 0.25;
+double ServoCloseAndFarShotPosition = 0.8;
 double ServoMediumShotPosition = 0.00;
 void Shooter::SetHoodFarShot() {
-    hoodSolenoid->Set(false);
+    hoodSolenoid->Set(true);
     SetServoPosition(ServoCloseAndFarShotPosition);
     currentHoodPosition = HOODFARSHOTPOSITION;
     hoodMoveToMediumState = 2; // if we're already in the far shot position we can skip the first 2 states of the move to medium shot routing
@@ -108,7 +116,7 @@ void Shooter::SetHoodCloseShot() {
     if (currentHoodPosition == HOODMEDIUMSHOTPOSITION) {
         switch(hoodMoveToCloseState) {
             case 0:
-                hoodSolenoid->Set(false);
+                hoodSolenoid->Set(true);
                 hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
                 hoodMoveToCloseState++;
             break;
@@ -123,54 +131,80 @@ void Shooter::SetHoodCloseShot() {
                 hoodMoveToCloseState++;
             break;
             case 3:
-                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.35_s) {
                     hoodMoveToCloseState++;
                 }
             break;
             case 4:
-                hoodSolenoid->Set(true);
+                hoodSolenoid->Set(false);
                 hoodMoveToCloseState = 0;
-                currentHoodPosition = HOODCLOSESHOTPOSITION;
+                hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
+                hoodMoveToCloseState++;
+            break;
+            case 5:
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
+                    currentHoodPosition = HOODCLOSESHOTPOSITION;
+                    shooterPositionServo->SetDisabled();
+                    hoodMoveToMediumState = 0;
+                    hoodMoveToCloseState = 0;
+                }
             break;
         }
     }
     else {
         SetServoPosition(ServoCloseAndFarShotPosition);
-        hoodSolenoid->Set(true);
+        hoodSolenoid->Set(false);
         hoodMoveToMediumState = 0; //reset this if we call medium shot again
         currentHoodPosition = HOODCLOSESHOTPOSITION;
     }
 }
 void Shooter::SetHoodMediumShot() {
-    switch(hoodMoveToMediumState) {
-        case 0:
-            hoodSolenoid->Set(false);
-            hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
-            hoodMoveToMediumState++;
-        break;
-        case 1:
-            if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
+    if (currentHoodPosition != HOODMEDIUMSHOTPOSITION) {
+        switch(hoodMoveToMediumState) {
+            case 0:
+                hoodSolenoid->Set(true);
+                hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
                 hoodMoveToMediumState++;
-                
-            }
-        break;
-        case 2:
-            SetServoPosition(ServoMediumShotPosition); //position for holding medium shot
-            hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
-            hoodMoveToMediumState++;
-        break;
-        case 3:
-            if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
+            break;
+            case 1:
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.2_s) {
+                    hoodMoveToMediumState++;
+                    
+                }
+            break;
+            case 2:
+                SetServoPosition(ServoMediumShotPosition); //position for holding medium shot
+                hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
                 hoodMoveToMediumState++;
-                shooterPositionServo->SetDisabled();
-            }
-        break;
-        case 4:
-            hoodSolenoid->Set(true);
-            currentHoodPosition = HOODMEDIUMSHOTPOSITION;
-        break;
+            break;
+            case 3:
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.35_s) {
+                    hoodMoveToMediumState++;
+                    shooterPositionServo->SetDisabled();
+                    
+                }
+            break;
+            case 4:
+                hoodSolenoid->Set(false);
+                hoodMoveToMediumState++;
+                hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
+            break;
+            case 5:
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.15_s) {
+                    currentHoodPosition = HOODMEDIUMSHOTPOSITION;
+                    shooterPositionServo->SetDisabled();
+                }
+            break;
+        }
     }
 }
+int Shooter::GetCurrentHoodPosition() {
+    return currentHoodPosition;
+}
+double Shooter::GetCurrentRPM() {
+    return shooterEncoder.GetVelocity();
+}
+
 // BEGIN AUTOGENERATED CODE, SOURCE=ROBOTBUILDER ID=CMDPIDGETTERS
 // END AUTOGENERATED CODE, SOURCE=ROBOTBUILDER ID=CMDPIDGETTERS
 
