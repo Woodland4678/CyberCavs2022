@@ -56,23 +56,11 @@ double liftOffHighBarPosition = -150.0;
 // #define DEFAULT_MIN_SPEED 250
 
 
-double positionIncrementForSlowMovement = 0.05; //When we want to move the arm against the bar we will keep increasing its target position by this much
-
-double climberMotorAllowedError = 3;
-
 int climbState,climbSubState,climbVelocityState;
 int inDeceleration,gotBarCount,noBarCount;
 FILE *fpt;
 double calibrateAngle;
 int inPositionMode; // 0=velocity mode.  1=hold position mode.  PID values are quite different.
-
-auto delayForDetectingBar = 1_s; //how many counts we need to see the bar for before we move on in seconds
-auto delayForPneumaticMovement = 1_s; //time delay to allow the pneumatics to move in seconds
-auto delayForMotorMovement = 1_s;
-
-
-auto originalTime = 0_s;
-auto timeOut = 0_s;
 
 // Code to optimize the climb.
 // Rather than position control, let's go with velocity control of the Spark Max / Neo Motor system.
@@ -314,30 +302,31 @@ void Climber::Climb(){
     //pov = Robot::oi->getDriverGamepad()->GetPOV();
     if (prevpov != pov)
         {
-        climb2P = frc::SmartDashboard::GetNumber("Climb P",0.00025);
-        climb2I = frc::SmartDashboard::GetNumber("Climb I",0.000001);
-        climb2D = frc::SmartDashboard::GetNumber("Climb D",0.0);
-        climb2FF = frc::SmartDashboard::GetNumber("Climb FF",0.0);
-        if (climbP != climb2P)
-            {
-            climberPidController.SetP(climb2P);
-            climbP = climb2P;
-            }
-        if (climbI != climb2I)
-            {
-            climberPidController.SetI(climb2I);
-            climbI = climb2I;
-            }
-        if (climbD != climb2D)
-            {
-            climberPidController.SetD(climb2D);    
-            climbD = climb2D;
-            }
-        if (climbFF != climb2FF)
-            {
-            climberPidController.SetFF(climb2FF);
-            climbFF = climb2FF;
-            }
+        // This code can be used for tuning the PID for velocity climb.
+        // climb2P = frc::SmartDashboard::GetNumber("Climb P",0.00025);
+        // climb2I = frc::SmartDashboard::GetNumber("Climb I",0.000001);
+        // climb2D = frc::SmartDashboard::GetNumber("Climb D",0.0);
+        // climb2FF = frc::SmartDashboard::GetNumber("Climb FF",0.0);
+        // if (climbP != climb2P)
+        //     {
+        //     climberPidController.SetP(climb2P);
+        //     climbP = climb2P;
+        //     }
+        // if (climbI != climb2I)
+        //     {
+        //     climberPidController.SetI(climb2I);
+        //     climbI = climb2I;
+        //     }
+        // if (climbD != climb2D)
+        //     {
+        //     climberPidController.SetD(climb2D);    
+        //     climbD = climb2D;
+        //     }
+        // if (climbFF != climb2FF)
+        //     {
+        //     climberPidController.SetFF(climb2FF);
+        //     climbFF = climb2FF;
+        //     }
         if (fpt != NULL)
             fprintf(fpt,"POV Change %d to %d\n",prevpov,pov);
         }
@@ -680,294 +669,10 @@ void Climber::Climb(){
                         climberLeaderMotor.StopMotor(); // Make sure motor stops.
                     }
                 }
-                
-        //     if (pov == 0)
-        //         {
-        //         climbAccel = 6000; // 1425.9 * 3;
-        //         climbDecel = 6000; // 1425.9 * 3;
-        //         climbMaxVelocity = 6000; // 713 * 3;
-        //         climbMinVelocity = 500;
-        //         climbTargetPosition = 86.09; // Straight up is the target
-        //         climbState++;            
-        //         }
-        //     break;
-        //     case 2: // while pov is held at 0, 
-        // case 1: // Begin responding to POV to start the climb.
-        //     // Adjust position to -86.09
-        //     if (pov == 0)
-        //         {
-        //         climbAccel = 6000; // 1425.9 * 3;
-        //         climbDecel = 6000; // 1425.9 * 3;
-        //         climbMaxVelocity = 6000; // 713 * 3;
-        //         climbMinVelocity = 500;
-        //         climbTargetPosition = 86.09;
-        //         if (!adjustVelocity()) // Make speed adjustments according to the global parameters
-        //             SetClimberVelocity(climbVelocity);
-        //         else
-        //             climbState++;
-        //         }
-        //     else if (pov == 180)
-        //         {
-        //         climbAccel = 6000;
-        //         climbDecel = 2000;
-        //         climbMaxVelocity = 6000;
-        //         climbMinVelocity = 500;
-        //         climbTargetPosition = 0;
-        //         if (!adjustVelocity()) // Make speed adjustments according to the global parameters
-        //             SetClimberVelocity(climbVelocity);
-        //         else
-        //             climbState++;
-        //         }
-        //     else if (pov == -1) // No buttons pressed
-        //         {
-        //         climberLeaderMotor.StopMotor(); // Make sure motor stops when we let go of POV.
-        //         originalPosition = GetClimberPosition(); // Assign originalPosition to current position when nothing pressed.
-        //         climbVelocity = 0; // set velocity at 0 since we've told the motors to stop
-        //         }
-        //     if (pov == 90) // Go try out the air cylinders
-        //         climbState = 4;
-        //     break;
-        // case 2: // Stop
-        //     climberLeaderMotor.StopMotor();
-        //     if (pov == -1)
-        //         climbState = 1; // Allow up and down back and forth
-        //     break;
-        // case 4: // Try retract of claw
-        //     if (pov == 90)
-        //         {
-        //         RetractReachingArm();
-        //         climbState++;
-        //         }
-        //     break;
-        // case 5:
-        //     if (pov == -1)
-        //         climbState++;
-        //     break;
-        // case 6: // Try extend of claw
-        //     if (pov == 90)
-        //         {
-        //         ExtendReachingArm();
-        //         climbState++;
-        //         }
-        //     break;
-        // case 7:
-        //     if (pov == -1)
-        //         climbState++;
-        //     break;
-        // case 8: // Try lock
-        //     if (pov == 90)
-        //         {
-        //         Lock();
-        //         climbState++;
-        //         }
-        //     break;
-        // case 9: 
-        //     if (pov == -1)
-        //         climbState++;
-        //     break;
-        // case 10: // And unlock
-        //     if (pov == 90)
-        //         {
-        //         Unlock();
-        //         climbState++;
-        //         }
-        //     break;
-        // case 11:
-        //     if (pov == -1)
-        //         climbState = 1;
-        //     break;
-
+            break;
         }
     prevpov = pov;
-
-//    switch (climbState){
-//         case CLIMBINGSETUP:
-//             RaiseClimber();
-//             SetClimberPosition(straightUpPosition);
-
-//             if (!(abs(climberEncoder.GetPosition() - straightUpPosition) < climberMotorAllowedError)){
-//                 originalTime = frc::Timer::GetFPGATimestamp();
-//             }
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 climbState=DRIVINGTOBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-
-//             ExtendReachingArm();
-//             Unlock();
-
-//             break;
-
-//         case DRIVINGTOBAR:
-//             // drivebase: drive backward
-            
-//             /*if (reachLimit1.Get() == true){ //if we do not see the bar keep resetting originalTime
-//                 originalTime = frc::Timer::GetFPGATimestamp();
-//             }*/
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar){
-//                 climbState=GRABHIGHBAR;
-//             }
-
-//             ///
-//             if (frc::Timer::GetFPGATimestamp() - timeOut > 5_s) {
-//                 climbState=GRABHIGHBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-
-//         case GRABHIGHBAR:
-//             SetClimberPosition(grabHighBarPosition);
-
-//             if (!(abs(climberEncoder.GetPosition() - grabHighBarPosition) < climberMotorAllowedError)){
-//                 originalTime = frc::Timer::GetFPGATimestamp();
-//             }
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 climbState=ENSUREHIGHBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-        
-//         case ENSUREHIGHBAR:
-//             grabHighBarPosition += positionIncrementForSlowMovement;
-//             SetClimberPosition(grabHighBarPosition);
-
-//            /* if (lockLimit.Get() == true){
-//                 originalTime = frc::Timer::GetFPGATimestamp();
-//             }*/
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar){      
-//                 Lock();
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar+delayForPneumaticMovement){
-//                 climbState=SWING1;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-
-//             // Temporary code
-//             if (frc::Timer::GetFPGATimestamp() - timeOut > 3_s) {
-//                 Lock();
-//             }
-            
-//             //
-//             if (frc::Timer::GetFPGATimestamp() - timeOut > 4_s) {
-//                 climbState=SWING1;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-
-//         case SWING1: // swing
-//             SetClimberPosition(swing1Position); // need to find the position
-//             if (!(abs(climberEncoder.GetPosition() - swing1Position) < climberMotorAllowedError)){
-//                 originalTime = frc::Timer::GetFPGATimestamp();
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 climbState=LIFTOFFMIDBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-        
-//         case LIFTOFFMIDBAR: // lifting off the bar
-//             SetClimberPosition(liftOffMediumBarPosition); // need to find the position
-            
-//             if (!(abs(climberEncoder.GetPosition() - liftOffMediumBarPosition) < climberMotorAllowedError)){
-//                 originalTime = frc::Timer::GetFPGATimestamp();  
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 RetractReachingArm(); 
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= (delayForDetectingBar+delayForPneumaticMovement)){
-//                 climbState=MOVETOTRAVERSEBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-        
-//         case MOVETOTRAVERSEBAR:
-//             SetClimberPosition(swingToTraverseBarPosition); // find the position
-
-//             if (!(abs(climberEncoder.GetPosition() - swingToTraverseBarPosition) < climberMotorAllowedError)){
-//                 originalTime = frc::Timer::GetFPGATimestamp();    
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 ExtendReachingArm();
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar+delayForPneumaticMovement){
-//                 climbState=GRABTRAVERSEBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-
-//         case GRABTRAVERSEBAR:
-//             SetClimberPosition(grabTraverseBarPosition);
-
-//             if (!(abs(climberEncoder.GetPosition() - grabTraverseBarPosition) < climberMotorAllowedError)){
-//                 originalTime = frc::Timer::GetFPGATimestamp();      
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 climbState=ENSUREGRABTRAVERSEBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-
-//         case ENSUREGRABTRAVERSEBAR:
-//             grabTraverseBarPosition -= positionIncrementForSlowMovement;
-//             SetClimberPosition(grabTraverseBarPosition);
-//             /*if (reachLimit2.Get() == true){
-//                 originalTime = frc::Timer::GetFPGATimestamp();  
-//             }*/     
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 climbState=SWING2;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//                 Unlock();
-//             }
-
-
-//             // Temporary code
-//             if (frc::Timer::GetFPGATimestamp() - timeOut > 2_s) {
-//                 Unlock();
-//             }
-            
-//             if (frc::Timer::GetFPGATimestamp() - timeOut > 3_s) {
-//                 climbState=SWING2;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-
-//         case SWING2: // second swing
-//             SetClimberPosition(finalSwingPosition); // need to find the position
-            
-//             if (!(abs(climberEncoder.GetPosition() - finalSwingPosition) < climberMotorAllowedError)){   
-//                 originalTime = frc::Timer::GetFPGATimestamp();    
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
-//                 Unlock();
-//             }
-
-//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar+delayForPneumaticMovement){
-//                 climbState=LIFTOFFHIGHBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-
-//             // Temporary code
-//             if (frc::Timer::GetFPGATimestamp() - timeOut > 5_s) {
-//                 climbState=LIFTOFFHIGHBAR;
-//                 timeOut = frc::Timer::GetFPGATimestamp();
-//             }
-//             break;
-
-//         case LIFTOFFHIGHBAR:
-//             SetClimberPosition(liftOffHighBarPosition); // find the position
-//             break;
-
-//     }
-}
+    }
 
 bool Climber::adjustVelocity() // Make speed adjustments according to the global parameters
     {
@@ -1189,6 +894,202 @@ void Climber::ClimbDown() // Called at 50Hz to have climbing system climb in the
 // BEGIN AUTOGENERATED CODE, SOURCE=ROBOTBUILDER ID=CMDPIDGETTERS
 // END AUTOGENERATED CODE, SOURCE=ROBOTBUILDER ID=CMDPIDGETTERS
 
+// Original Climb Code using position only.
+//double positionIncrementForSlowMovement = 0.05; //When we want to move the arm against the bar we will keep increasing its target position by this much
+//double climberMotorAllowedError = 3;
+// auto delayForDetectingBar = 1_s; //how many counts we need to see the bar for before we move on in seconds
+// auto delayForPneumaticMovement = 1_s; //time delay to allow the pneumatics to move in seconds
+// auto delayForMotorMovement = 1_s;
+// auto originalTime = 0_s;
+// auto timeOut = 0_s;
+
+//    switch (climbState){
+//         case CLIMBINGSETUP:
+//             RaiseClimber();
+//             SetClimberPosition(straightUpPosition);
+
+//             if (!(abs(climberEncoder.GetPosition() - straightUpPosition) < climberMotorAllowedError)){
+//                 originalTime = frc::Timer::GetFPGATimestamp();
+//             }
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 climbState=DRIVINGTOBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+
+//             ExtendReachingArm();
+//             Unlock();
+
+//             break;
+
+//         case DRIVINGTOBAR:
+//             // drivebase: drive backward
+            
+//             /*if (reachLimit1.Get() == true){ //if we do not see the bar keep resetting originalTime
+//                 originalTime = frc::Timer::GetFPGATimestamp();
+//             }*/
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar){
+//                 climbState=GRABHIGHBAR;
+//             }
+
+//             ///
+//             if (frc::Timer::GetFPGATimestamp() - timeOut > 5_s) {
+//                 climbState=GRABHIGHBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+
+//         case GRABHIGHBAR:
+//             SetClimberPosition(grabHighBarPosition);
+
+//             if (!(abs(climberEncoder.GetPosition() - grabHighBarPosition) < climberMotorAllowedError)){
+//                 originalTime = frc::Timer::GetFPGATimestamp();
+//             }
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 climbState=ENSUREHIGHBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+        
+//         case ENSUREHIGHBAR:
+//             grabHighBarPosition += positionIncrementForSlowMovement;
+//             SetClimberPosition(grabHighBarPosition);
+
+//            /* if (lockLimit.Get() == true){
+//                 originalTime = frc::Timer::GetFPGATimestamp();
+//             }*/
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar){      
+//                 Lock();
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar+delayForPneumaticMovement){
+//                 climbState=SWING1;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+
+//             // Temporary code
+//             if (frc::Timer::GetFPGATimestamp() - timeOut > 3_s) {
+//                 Lock();
+//             }
+            
+//             //
+//             if (frc::Timer::GetFPGATimestamp() - timeOut > 4_s) {
+//                 climbState=SWING1;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+
+//         case SWING1: // swing
+//             SetClimberPosition(swing1Position); // need to find the position
+//             if (!(abs(climberEncoder.GetPosition() - swing1Position) < climberMotorAllowedError)){
+//                 originalTime = frc::Timer::GetFPGATimestamp();
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 climbState=LIFTOFFMIDBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+        
+//         case LIFTOFFMIDBAR: // lifting off the bar
+//             SetClimberPosition(liftOffMediumBarPosition); // need to find the position
+            
+//             if (!(abs(climberEncoder.GetPosition() - liftOffMediumBarPosition) < climberMotorAllowedError)){
+//                 originalTime = frc::Timer::GetFPGATimestamp();  
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 RetractReachingArm(); 
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= (delayForDetectingBar+delayForPneumaticMovement)){
+//                 climbState=MOVETOTRAVERSEBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+        
+//         case MOVETOTRAVERSEBAR:
+//             SetClimberPosition(swingToTraverseBarPosition); // find the position
+
+//             if (!(abs(climberEncoder.GetPosition() - swingToTraverseBarPosition) < climberMotorAllowedError)){
+//                 originalTime = frc::Timer::GetFPGATimestamp();    
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 ExtendReachingArm();
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar+delayForPneumaticMovement){
+//                 climbState=GRABTRAVERSEBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+
+//         case GRABTRAVERSEBAR:
+//             SetClimberPosition(grabTraverseBarPosition);
+
+//             if (!(abs(climberEncoder.GetPosition() - grabTraverseBarPosition) < climberMotorAllowedError)){
+//                 originalTime = frc::Timer::GetFPGATimestamp();      
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 climbState=ENSUREGRABTRAVERSEBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+
+//         case ENSUREGRABTRAVERSEBAR:
+//             grabTraverseBarPosition -= positionIncrementForSlowMovement;
+//             SetClimberPosition(grabTraverseBarPosition);
+//             /*if (reachLimit2.Get() == true){
+//                 originalTime = frc::Timer::GetFPGATimestamp();  
+//             }*/     
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 climbState=SWING2;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//                 Unlock();
+//             }
+
+
+//             // Temporary code
+//             if (frc::Timer::GetFPGATimestamp() - timeOut > 2_s) {
+//                 Unlock();
+//             }
+            
+//             if (frc::Timer::GetFPGATimestamp() - timeOut > 3_s) {
+//                 climbState=SWING2;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+
+//         case SWING2: // second swing
+//             SetClimberPosition(finalSwingPosition); // need to find the position
+            
+//             if (!(abs(climberEncoder.GetPosition() - finalSwingPosition) < climberMotorAllowedError)){   
+//                 originalTime = frc::Timer::GetFPGATimestamp();    
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime) >= delayForMotorMovement){
+//                 Unlock();
+//             }
+
+//             if ((frc::Timer::GetFPGATimestamp() - originalTime)>=delayForDetectingBar+delayForPneumaticMovement){
+//                 climbState=LIFTOFFHIGHBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+
+//             // Temporary code
+//             if (frc::Timer::GetFPGATimestamp() - timeOut > 5_s) {
+//                 climbState=LIFTOFFHIGHBAR;
+//                 timeOut = frc::Timer::GetFPGATimestamp();
+//             }
+//             break;
+
+//         case LIFTOFFHIGHBAR:
+//             SetClimberPosition(liftOffHighBarPosition); // find the position
+//             break;
+
+//     }
 
 // Put methods for controlling this subsystem
 // here. Call these from Commands.
