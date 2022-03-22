@@ -186,7 +186,7 @@ void Intake::Periodic() {
     frc::SmartDashboard::PutNumber("Detected Colour R", colourSensor.GetRawColor0().red);
     frc::SmartDashboard::PutNumber("Detected Colour G", detectedColour.green);
     frc::SmartDashboard::PutNumber("Detected Colour B", detectedColour.blue);
-    frc::SmartDashboard::PutNumber("Color Sensor Proximity", m_Proximity);
+    frc::SmartDashboard::PutNumber("Color Sensor Proximity", GetColourSensorProximity());
     // Put code here to be run every loop
 
 }

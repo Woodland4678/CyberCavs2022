@@ -835,6 +835,11 @@ int PathFinder::processPath(void) // This needs to be called at 50Hz any time pa
         // follow trajectory to run the robot (as long as we have points to follow)
         if (pathData.startedTraverse == 0) // If traverse has not yet started,  
             { // and we have at least a few points to start with, start the traversal stuff.
+            if (pathData.trajPointIdx > MAX_TRAJ_POINTS) // trying to force fix where sometimes
+                {
+                pathData.trajPointIdx = 0; // trajPointIdx is ending up at some astronomical number.
+                pathData.trajPointToUse = 0;
+                }
             printf("\nCheck for Start, trajSpace=%d, PTU=%d. PTIdx=%d started=%d",trajectorySpace(),pathData.trajPointToUse,pathData.trajPointIdx,pathData.startedTraverse);
             if (trajectorySpace() < 8) // Wait till we have at least 8 points in the queue.
                 {
@@ -926,7 +931,12 @@ int PathFinder::processPath(void) // This needs to be called at 50Hz any time pa
     
     if (trajectorySpace() > 4) // If we have space for trajectory entries, go make more,  Otherwise, wait till these are used up.
         { // we're expecting the trajectory generation stuff to recoginze when it's producing the last one for the segment and we can get the measured data
-        idx = pathData.activeIdx; 
+        idx = pathData.activeIdx;
+
+        printf("ptsGen=%d, idx=%d segStartX=%f segStartY=%f segStartAngle=%f\n\r",pathData.pointsGenerated,idx,
+        segmentData[0].startX,
+        segmentData[0].startY,
+        segmentData[0].startAngle); 
         if (pathData.pointsGenerated > idx) // makes sure math has been generated for this one.
             {
             if (!segmentData[idx].done) // if we have not yet generated all the traversal data for this one, go do some more.

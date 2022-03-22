@@ -41,7 +41,7 @@ void ShootLow::Execute() {
     }
     if(Robot::shooter->SetShooterVelocity(1500, 200)){
         Robot::intake->SetIsShooting(true);
-        Robot::intake->SetIndexerPower(-0.6);
+        Robot::intake->SetIndexerPower(-1);
         Robot::intake->SetHopperPower(0.8);
     }
 }

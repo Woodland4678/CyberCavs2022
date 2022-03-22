@@ -16,6 +16,7 @@ Auto5Ball::Auto5Ball(): frc::Command() {
 }
 double calculatedAutoShooterSpeed = 0;
 double autoTargetVertical = 0;
+auto timeDelayToLiftIntake = 0_s;
 // Called when the command is initially scheduled.
 void Auto5Ball::Initialize() {
   Robot::driveTrain->ShiftUp();
@@ -42,13 +43,15 @@ void Auto5Ball::Initialize() {
   // path4->setStartPoint(0,0,0); 
   // path4->splineTo(1,-0.5,0, 0,-2,-1,0,5000);
 
-  path5 = new PathFinder(2,1,0.71,1);
-  path5->setStartPoint(0,0,0); 
-  path5->splineTo(1,-3.85,-1.8, 20,-4,-1,5,5000); //-2.5 
+// Path 5 stuff is generated on-the-fly later in this code.
+//  path5->setStartPoint(0,0,0); 
+//  path5->splineTo(1,-3.85,-1.8, 20,-4,-1,5,5000); //-2.5 
 
   path6 = new PathFinder(3,1,0.71,1);
   path6->setStartPoint(0,0,0); 
   path6->splineTo(1,3.2,0.5,10,3,2,0,5000);
+
+  path5 = new PathFinder(2,1,0.71,1);
 
     /*path1 = new PathFinder(3,2,0.4,1);
     path1->setStartPoint(-2.275,-0.674, -1.5); 
@@ -94,7 +97,7 @@ void Auto5Ball::Execute() {
       Robot::intake->SetIsDeployed(false);
       Robot::intake->SetRollerPower(0);
       Robot::intake->SetPusherPower(0);
-      Robot::intake->SetHopperPower(0);
+      Robot::intake->SetHopperPower(0.2);
     }
     switch(autoStep) {
       case GETFIRSTBALL:
@@ -104,8 +107,7 @@ void Auto5Ball::Execute() {
         Robot::intake->SetIsShooting(false);
         Robot::intake->SetRollerPower(0.8);
         Robot::intake->SetPusherPower(0.8);
-        Robot::intake->SetHopperPower(0.8);
-        
+        Robot::intake->SetHopperPower(0.4);
         if(path1->processPath()) {
           autoStep = FIRSTGYROTURN;
           autoOriginalTime = frc::Timer::GetFPGATimestamp();
@@ -113,6 +115,12 @@ void Auto5Ball::Execute() {
       break;
       case FIRSTGYROTURN:
         Robot::shooter->SetHoodMediumShot();
+        // if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2.0_s) {
+        //   Robot::intake->RetractIntake();
+        //   Robot::intake->SetIsDeployed(false);
+        //   Robot::intake->SetRollerPower(0);
+        //   Robot::intake->SetPusherPower(0);
+        // }
         if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2.5_s) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
@@ -144,7 +152,7 @@ void Auto5Ball::Execute() {
         }
       break;
       case FIRSTAUTOAIM:
-        if (Robot::driveTrain->autoAim(0) < 0.1) {
+        if (Robot::driveTrain->autoAim(0) < 0.05) {
           autoStep = SHOOTFIRSTTWOBALLS;
           autoOriginalTime = frc::Timer::GetFPGATimestamp();
         }
@@ -183,6 +191,12 @@ void Auto5Ball::Execute() {
         if (Robot::intake->GetTotalCargoShot() > 2) {
           Robot::intake->SetIsShooting(false);
           autoStep = MOVETOGRABFINALBALLS;
+          Robot::intake->SetHopperPower(0.5);
+          // Generate Path 5 on-the-fly starting at measured location, ending up by final ball.
+          printf("Path5 set Start Point...\n\r");
+          path5->setStartPoint(Robot::driveTrain->location.locx/100.0,Robot::driveTrain->location.locy/100.0,360.0-Robot::driveTrain->location.heading); 
+          path5->splineTo(1,-2.408,-6.698,55,-3.5,-1,0,5000); 
+          
         }
         
       break;
@@ -200,12 +214,13 @@ void Auto5Ball::Execute() {
         }
         if (Robot::intake->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
           autoStep = MOVETOGRABFINALBALLS;
-          
+
           Robot::intake->SetIndexerPower(0);
           Robot::intake->SetBallCount(0);
         }
       break;
       case MOVETOGRABFINALBALLS:
+        printf("Path5->processPath\n\r");
         if(path5->processPath()) {
           autoStep = DELAYTOGETFINABALLS;
           autoOriginalTime = frc::Timer::GetFPGATimestamp();

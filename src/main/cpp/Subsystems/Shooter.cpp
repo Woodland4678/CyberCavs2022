@@ -70,7 +70,7 @@ bool Shooter::SetShooterVelocity(double velocity, double shooterError=150, int s
     shooterPidController.SetReference(velocity, rev::ControlType::kVelocity, slot);
     if (abs(shooterEncoder.GetVelocity()-velocity)<=shooterError){
         shooterSpeeedUpCount++;
-        if (shooterSpeeedUpCount>=8){
+        if (shooterSpeeedUpCount>=10){
              return true;
         }
     }
