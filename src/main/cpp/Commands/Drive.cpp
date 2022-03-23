@@ -109,6 +109,11 @@ void Drive::Execute() {
     pr_rpm = rrpm;
     pl_rpm = lrpm;
 
+    if (Robot::climber->GetClimberMode()) { //limit drive speed when we are going for the climb
+        lrpm *= 0.3;
+        rrpm *= 0.3;
+    }
+
     Robot::driveTrain->SetLeftPower(lrpm);
     Robot::driveTrain->SetRightPower(rrpm);
 
