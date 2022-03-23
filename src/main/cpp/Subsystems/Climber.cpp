@@ -84,6 +84,8 @@ double climbTargetPosition;
 double climbP,climbI,climbD,climbFF;
 double climb2P,climb2I,climb2D,climb2FF;
 
+bool isClimbing = false;
+
 rev::CANSparkMax climberLeaderMotor{7, rev::CANSparkMax::MotorType::kBrushless};
 rev::CANSparkMax climberFollowerMotor{9, rev::CANSparkMax::MotorType::kBrushless};
 rev::SparkMaxPIDController climberPidController = climberLeaderMotor.GetPIDController();
@@ -147,7 +149,12 @@ void Climber::SetClimberPower(double pwr) {
     //climberPidController.SetReference(pwr, rev::ControlType::kVelocity);
     climberLeaderMotor.Set(pwr);
 }
-
+void SetClimberMode(bool climberMode) {
+    isClimbing = climberMode;
+}
+bool GetClimberMode() {
+    return isClimbing;
+}
 void Climber::SetClimberVelocity(double vel) {
     if (inPositionMode)
         { // If we were in position mode, change PID values to those that work for velocity control.

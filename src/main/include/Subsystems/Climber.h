@@ -73,6 +73,9 @@ Climber();
     void CloseFile();
     void OpenFile();
 
+    void SetClimberMode(bool climberMode);
+    bool GetClimberMode();
+
     enum {
         CLIMBINGSETUP,
         DRIVINGTOBAR,

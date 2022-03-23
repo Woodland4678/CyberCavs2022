@@ -36,8 +36,9 @@ int Climb::getDriverPOV()
 // Called just before this Command runs the first time
 void Climb::Initialize() {
     m_originalTime = frc::Timer::GetFPGATimestamp();
-    Robot::climber->OpenFile();
+    //Robot::climber->OpenFile();
     Robot::climber->RaiseClimber(); // Activate the lift air cylinder.
+    Robot::climber->SetClimberMode(true);
 }
 
 int count = 0;
@@ -86,5 +87,5 @@ void Climb::End() {
 // Called when another command which requires one or more of the same
 // subsystems is scheduled to run
 void Climb::Interrupted() {
-
+    End();
 }
