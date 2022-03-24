@@ -31,16 +31,19 @@ auto originalTimeForHoodMovement = 0_s;
 void AutoAim::Initialize() {
     currentGyroValue = Robot::driveTrain->getGyroReading();
     originalTimeForHoodMovement = frc::Timer::GetFPGATimestamp();
+    
     //Robot::driveTrain->setLimeLED(true);
 }
 
 // Called repeatedly when this Command is scheduled to run
 void AutoAim::Execute() {
     Robot::shooter->SetHoodCloseShot();
-    if (frc::Timer::GetFPGATimestamp() - originalTimeForHoodMovement > 0.5_s) { //give time for the hood to move
-        if (Robot::shooter->SetShooterVelocity(3700, 50)) {
+    Robot::shooter->SetShooterVelocity(3475, 50);
+    if (Robot::shooter->GetCurrentHoodPosition() == 1) { //give time for the hood to move
+        if (Robot::shooter->SetShooterVelocity(3475, 50)) {
             Robot::intake->SetIsShooting(true);
-            Robot::intake->SetIndexerPower(-0.4);
+            Robot::intake->SetIndexerPower(-0.7);
+            Robot::intake->SetHopperPower(0.7);
         }
         else {
             Robot::intake->SetIndexerPower(0);
@@ -58,7 +61,7 @@ void AutoAim::Execute() {
 
 // Make this return true when this Command no longer needs to run execute()
 bool AutoAim::IsFinished() {
-    return doneAutoAim;
+    return false;
 }
 
 // Called once after isFinished returns true

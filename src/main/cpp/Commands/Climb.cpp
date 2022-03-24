@@ -46,11 +46,13 @@ bool doneCalibrate = false;
 // Called repeatedly when this Command is scheduled to run
 void Climb::Execute() {
     Robot::shooter->SetHoodCloseShot(); // Hood needs to be all the way down for climb to work.  Just keep calling this and it will go down.
-    if (!doneCalibrate && Robot::climber->CalibrateClimber()) {
-        doneCalibrate = true;
-    }
-    else if (doneCalibrate) {
-        Robot::climber->Climb();
+    if (Robot::shooter->GetCurrentHoodPosition() == 1) {
+        if (!doneCalibrate && Robot::climber->CalibrateClimber()) {
+            doneCalibrate = true;
+        }
+        else if (doneCalibrate) {
+            Robot::climber->Climb();
+        }
     }
    
 //     if (Robot::oi->getDriverGamepad()->GetPOV() == 0) {

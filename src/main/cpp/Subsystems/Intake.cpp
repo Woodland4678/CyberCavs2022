@@ -115,20 +115,20 @@ void Intake::Periodic() {
     if (isIntakeDeployed) {
         if (colourSensor.GetProximity0() > 300) {
             if (GetAllianceColour() == 0) { //on Red alliance
-                if (detectedColour.blue > 0.4 && detectedColour.red < 0.3) {
-                    //wrongBallDetected = true;
-                }
-                // if (colourSensor.GetRawColor0().blue > colourSensor.GetRawColor0().red) {
-                //      wrongBallDetected = true;
-                //  }
+                // if (detectedColour.blue > 0.4 && detectedColour.red < 0.3) {
+                //     wrongBallDetected = true;
+                // }
+                if (colourSensor.GetRawColor0().blue > colourSensor.GetRawColor0().red) {
+                     wrongBallDetected = true;
+                 }
             }
             else if (GetAllianceColour() == 1) { //on Blue alliance
-                if (detectedColour.red > 0.4 && detectedColour.blue < 0.3) {
-                    //wrongBallDetected = true;
-                }
-                // if (colourSensor.GetRawColor0().red > colourSensor.GetRawColor0().blue) {
-                //      wrongBallDetected = true;
+                // if (detectedColour.red > 0.4 && detectedColour.blue < 0.3) {
+                //     wrongBallDetected = true;
                 // }
+                if (colourSensor.GetRawColor0().red > colourSensor.GetRawColor0().blue) {
+                     wrongBallDetected = true;
+                }
             }
         }
     }
@@ -137,11 +137,11 @@ void Intake::Periodic() {
         rollerMotor.Set(-0.8);
         SetHopperPower(-0.8);
         reverseIntakeCount++;
-        if (reverseIntakeCount > 30) {
+        if (reverseIntakeCount > 45) {
             pusherMotor.Set(0);
             rollerMotor.Set(0);
         }
-        if (reverseIntakeCount > 40) {
+        if (reverseIntakeCount > 50) {
             pusherMotor.Set(0.8);
             rollerMotor.Set(0.8);
             SetHopperPower(0.8);
@@ -185,7 +185,7 @@ void Intake::Periodic() {
     //m_Proximity = m_ColourSensor.GetProximity();
     frc::SmartDashboard::PutNumber("Detected Colour R", colourSensor.GetRawColor0().red);
     frc::SmartDashboard::PutNumber("Detected Colour G", detectedColour.green);
-    frc::SmartDashboard::PutNumber("Detected Colour B", detectedColour.blue);
+    frc::SmartDashboard::PutNumber("Detected Colour B", colourSensor.GetRawColor0().blue);
     frc::SmartDashboard::PutNumber("Color Sensor Proximity", GetColourSensorProximity());
     // Put code here to be run every loop
 

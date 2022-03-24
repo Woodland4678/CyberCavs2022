@@ -42,7 +42,7 @@ AddChild("ShooterPositionServo", shooterPositionServo);
     shooterPidController.SetFF(0.000002, 0);
 
     shooterPidController.SetP(0.0001, 1);
-    shooterPidController.SetI(0.0, 1);
+    shooterPidController.SetI(0.0000001, 1);
     shooterPidController.SetD(0.0, 1);
     shooterPidController.SetFF(0.0, 1);
 
@@ -178,7 +178,7 @@ void Shooter::SetHoodMediumShot() {
                 hoodMoveToMediumState++;
             break;
             case 3:
-                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.35_s) {
+                if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.4_s) {
                     hoodMoveToMediumState++;
                     shooterPositionServo->SetDisabled();
                     
@@ -193,6 +193,7 @@ void Shooter::SetHoodMediumShot() {
                 if (frc::Timer::GetFPGATimestamp() - hoodMoveOriginalTime > 0.15_s) {
                     currentHoodPosition = HOODMEDIUMSHOTPOSITION;
                     shooterPositionServo->SetDisabled();
+                    hoodMoveToCloseState = 0;
                 }
             break;
         }

@@ -120,7 +120,7 @@ void Drive::Execute() {
     if (Robot::intake->GetBallCount() > 1 && !startedShooter) {
         Robot::shooter->SetShooterVelocity(3800, 100);
         Robot::driveTrain->setLimeLED(true);
-        startedShooter = false;
+        startedShooter = true;
     }
     else if (Robot::intake->GetBallCount() == 0) {
         startedShooter = false;

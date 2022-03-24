@@ -57,53 +57,72 @@ float hoodMediumHighestValue = -6;
 int hoodTargetPos = 0;
 
 void ShootHigh::Execute() {
-    if (frc::Timer::GetFPGATimestamp() - shootingTimer > 1.5_s) {
-        Robot::intake->SetRollerPower(0);
-        Robot::intake->SetPusherPower(0);
-        Robot::intake->RetractIntake();
-    }
-    if (!canShoot || (Robot::shooter->GetCurrentHoodPosition() != hoodTargetPos)) {
-        targetVertical = Robot::driveTrain->getLimeVertical();
-        if (targetVertical <= hoodMediumHighestValue) {
-            hoodTargetPos = 0;
-            Robot::shooter->SetHoodFarShot();
-            calculatedShooterSpeed = 4.2858 * targetVertical * targetVertical + 4.206434 * targetVertical + 3639.6577;
+    if (Robot::driveTrain->getLimeValidObject()) {
+        if (frc::Timer::GetFPGATimestamp() - shootingTimer > 1.5_s) {
+            Robot::intake->SetRollerPower(0);
+            Robot::intake->SetPusherPower(0);
+            Robot::intake->RetractIntake();
         }
-        else if (targetVertical >= hoodHighClosestValue) {
-            hoodTargetPos = 2;
-            Robot::shooter->SetHoodMediumShot();
-            calculatedShooterSpeed = 2.36858 * targetVertical * targetVertical + -48.24201 * targetVertical + 3489.9; //need equation here later
-        }
-        else {
-            if (Robot::shooter->GetCurrentHoodPosition() == 1 || Robot::shooter->GetCurrentHoodPosition() == 0) {
-                Robot::shooter->SetHoodFarShot();
+        if (!canShoot || (Robot::shooter->GetCurrentHoodPosition() != hoodTargetPos)) {
+            targetVertical = Robot::driveTrain->getLimeVertical();
+            if (targetVertical <= hoodMediumHighestValue) {
                 hoodTargetPos = 0;
+                Robot::shooter->SetHoodFarShot();
                 calculatedShooterSpeed = 4.2858 * targetVertical * targetVertical + 4.206434 * targetVertical + 3639.6577;
-                
+            }
+            else if (targetVertical >= hoodHighClosestValue) {
+                hoodTargetPos = 2;
+                Robot::shooter->SetHoodMediumShot();
+                calculatedShooterSpeed = 2.36858 * targetVertical * targetVertical + -48.24201 * targetVertical + 3539.9; //3489.9 //need equation here later
             }
             else {
-                hoodTargetPos = 2;
-                calculatedShooterSpeed = 2.36858 * targetVertical * targetVertical + -48.24201 * targetVertical + 3489.9; //need equation here later
+                if (Robot::shooter->GetCurrentHoodPosition() == 1 || Robot::shooter->GetCurrentHoodPosition() == 0) {
+                    Robot::shooter->SetHoodFarShot();
+                    hoodTargetPos = 0;
+                    calculatedShooterSpeed = 4.2858 * targetVertical * targetVertical + 4.206434 * targetVertical + 3639.6577;
+                    
+                }
+                else {
+                    hoodTargetPos = 2;
+                    calculatedShooterSpeed = 2.36858 * targetVertical * targetVertical + -48.24201 * targetVertical + 3549.9; //need equation here later
+                }
+            }
+            Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100, setPIDSlot);
+        }
+        if (!canShoot) {
+            if((Robot::driveTrain->autoAim(0) < 0.1)) {
+                isAimedCount++;
             }
         }
-        Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100, setPIDSlot);
-    }
-    if((Robot::driveTrain->autoAim(0) < 0.1) && !canShoot) {
-        isAimedCount++;
-    }
-    else {
-        isAimedCount = 0;
-    }
-    if (isAimedCount > 15) {
-        canShoot = true;
-    }
-    if (canShoot && (Robot::shooter->GetCurrentHoodPosition() == hoodTargetPos)) {
-        Robot::intake->SetIsShooting(true);
-        if(Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 50, setPIDSlot)){
-            setPIDSlot = 1;
-            Robot::intake->SetIndexerPower(-0.4);
-            Robot::intake->SetHopperPower(0.7);
+        else {
+            isAimedCount = 0;
         }
+        if (isAimedCount > 15) {
+            canShoot = true;
+            Robot::driveTrain->SetLeftPower(0);
+            Robot::driveTrain->SetRightPower(0);
+        }
+        if (canShoot && (Robot::shooter->GetCurrentHoodPosition() == hoodTargetPos)) {
+            Robot::intake->SetIsShooting(true);
+            if(Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 75, setPIDSlot)){
+                setPIDSlot = 1;
+                Robot::intake->SetIndexerPower(-0.75);
+                Robot::intake->SetHopperPower(0.7);
+            }
+            
+        }
+    }
+    else { // if no valid target assume we are against the hub
+       Robot::shooter->SetHoodCloseShot();
+        if (Robot::shooter->GetCurrentHoodPosition() == 1) { //wait for hood to be in close shot position
+            if (Robot::shooter->SetShooterVelocity(3600, 50)) {
+                Robot::intake->SetIsShooting(true);
+                Robot::intake->SetIndexerPower(-0.4);
+            }
+            else {
+                Robot::intake->SetIndexerPower(0);
+            }
+        } 
     }
     /*if (Robot::oi->getDriverGamepad()->GetRawButton(1)) {
         Robot::intake->SetHopperPower(0.8);

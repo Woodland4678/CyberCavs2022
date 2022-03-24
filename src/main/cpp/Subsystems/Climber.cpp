@@ -149,10 +149,10 @@ void Climber::SetClimberPower(double pwr) {
     //climberPidController.SetReference(pwr, rev::ControlType::kVelocity);
     climberLeaderMotor.Set(pwr);
 }
-void SetClimberMode(bool climberMode) {
+void Climber::SetClimberMode(bool climberMode) {
     isClimbing = climberMode;
 }
-bool GetClimberMode() {
+bool Climber::GetClimberMode() {
     return isClimbing;
 }
 void Climber::SetClimberVelocity(double vel) {

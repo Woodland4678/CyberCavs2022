@@ -61,6 +61,6 @@ enum {
     HOODCLOSESHOTPOSITION,
 	HOODMEDIUMSHOTPOSITION,
 	};
-int currentHoodPosition = HOODFARSHOTPOSITION; //medium position
+int currentHoodPosition = HOODCLOSESHOTPOSITION; //medium position
 };
 

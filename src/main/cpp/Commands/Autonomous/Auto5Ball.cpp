@@ -32,7 +32,7 @@ void Auto5Ball::Initialize() {
 
   path3 = new PathFinder(2.5,1,0.71,1);
   path3->setStartPoint(0,0,0); 
-  path3->splineTo(1,2.2,0,0, 3.5,0.8,0,5000);
+  path3->splineTo(1,2.28,0,0, 3.5,0.8,0,5000);
   
   // path3 = new PathFinder(1.5,1,0.71,1);
   // path3->setStartPoint(-3.341,-0.674, 0); 
@@ -49,7 +49,7 @@ void Auto5Ball::Initialize() {
 
   path6 = new PathFinder(3,1,0.71,1);
   path6->setStartPoint(0,0,0); 
-  path6->splineTo(1,3.2,0.5,10,3,2,0,5000);
+  path6->splineTo(1,3.2,0.7,40,3.5,1.2,0,5000);
 
   path5 = new PathFinder(2,1,0.71,1);
 
@@ -195,7 +195,7 @@ void Auto5Ball::Execute() {
           // Generate Path 5 on-the-fly starting at measured location, ending up by final ball.
           printf("Path5 set Start Point...\n\r");
           path5->setStartPoint(Robot::driveTrain->location.locx/100.0,Robot::driveTrain->location.locy/100.0,360.0-Robot::driveTrain->location.heading); 
-          path5->splineTo(1,-2.408,-6.698,55,-3.5,-1,0,5000); 
+          path5->splineTo(1,-2.508,-6.548,55,-3.5,-1,0,5000); 
           
         }
         
@@ -228,9 +228,12 @@ void Auto5Ball::Execute() {
       
       break;
       case DELAYTOGETFINABALLS:
+        Robot::driveTrain->SetLeftPower(-0.06);
+        Robot::driveTrain->SetRightPower(-0.06);
         if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.5_s) {
           autoStep= MOVETOSHOOTFINALBALLS;
-          
+          Robot::driveTrain->SetLeftPower(0);
+          Robot::driveTrain->SetRightPower(0);
         }
         Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50);
       break;
