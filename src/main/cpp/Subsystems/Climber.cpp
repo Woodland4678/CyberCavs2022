@@ -143,7 +143,7 @@ void Climber::InitDefaultCommand() {
 
 void Climber::Periodic() {
     // Put code here to be run every loop
-
+    frc::SmartDashboard::PutNumber("Climber Position", climberEncoder.GetPosition());
 }
 void Climber::SetClimberPower(double pwr) {
     //climberPidController.SetReference(pwr, rev::ControlType::kVelocity);
@@ -154,6 +154,14 @@ void Climber::SetClimberMode(bool climberMode) {
 }
 bool Climber::GetClimberMode() {
     return isClimbing;
+}
+bool Climber::MoveClimberLevel() {
+    inPositionMode = 0;
+    SetClimberPosition(horizontalPosition);
+    if (abs(climberEncoder.GetPosition() - horizontalPosition) < 0.5) {
+        return true;
+    }
+    return false;
 }
 void Climber::SetClimberVelocity(double vel) {
     if (inPositionMode)
@@ -191,6 +199,8 @@ bool isClicked = true;
 // Modifying CalibrateClimber so that it will only move the arm about 5 degrees, then gives up and assumes a default angle.
 // 
 bool Climber::CalibrateClimber(){
+    climbState = 0;
+    originalPosition = GetClimberPosition();
     RaiseClimber();
      if (fabs(GetClimberPosition() - calibrateAngle) > 15.0)
          { // If we exceded the 7 degree limit, assume horizontal was our starting position 
@@ -211,6 +221,7 @@ bool Climber::CalibrateClimber(){
         climberEncoder.SetPosition(horizontalPosition);
         isClicked = true;
         climberLeaderMotor.StopMotor();
+
         return true;
     }
 

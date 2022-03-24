@@ -28,6 +28,7 @@ ClimbReset::ClimbReset(): frc::Command() {
 
 
 // Called just before this Command runs the first time
+bool doneClimberReset = false;
 void ClimbReset::Initialize() {
    
 }
@@ -35,18 +36,22 @@ void ClimbReset::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void ClimbReset::Execute() {
-    
+    if (Robot::climber->MoveClimberLevel()) {
+        Robot::climber->LowerClimber();
+        doneClimberReset = true;
+    }
 
 }
 
 // Make this return true when this Command no longer needs to run execute()
 bool ClimbReset::IsFinished() {
-   return false;
+   return doneClimberReset;
 }
 
 // Called once after isFinished returns true
 void ClimbReset::End() {
-
+    doneClimberReset = false;
+    Robot::climber->SetClimberMode(false);
 }
 
 // Called when another command which requires one or more of the same

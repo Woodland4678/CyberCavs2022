@@ -76,6 +76,8 @@ Climber();
     void SetClimberMode(bool climberMode);
     bool GetClimberMode();
 
+    bool MoveClimberLevel();
+
     enum {
         CLIMBINGSETUP,
         DRIVINGTOBAR,

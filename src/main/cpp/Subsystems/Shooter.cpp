@@ -62,6 +62,7 @@ void Shooter::InitDefaultCommand() {
 void Shooter::Periodic() {
     // Put code here to be run every loop
     frc::SmartDashboard::PutNumber("Shooter Actual RPM", shooterEncoder.GetVelocity());
+    frc::SmartDashboard::PutNumber("Shooter hood position", currentHoodPosition);
     
 }
 
@@ -137,7 +138,7 @@ void Shooter::SetHoodCloseShot() {
             break;
             case 4:
                 hoodSolenoid->Set(false);
-                hoodMoveToCloseState = 0;
+                //hoodMoveToCloseState = 0;
                 hoodMoveOriginalTime = frc::Timer::GetFPGATimestamp();
                 hoodMoveToCloseState++;
             break;

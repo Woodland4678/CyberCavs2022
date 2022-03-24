@@ -30,6 +30,7 @@ auto shootingTimer = 0_s;
 bool switchPID = false;
 int setPIDSlot = 0;
 // Called just before this Command runs the first time
+int hoodTargetPos = 0;
 void ShootHigh::Initialize() {
     Robot::shooter->SetHoodFarShot();
     frc::SmartDashboard::PutNumber("Shooter P", kP);
@@ -43,6 +44,7 @@ void ShootHigh::Initialize() {
     //Robot::intake->SetPusherPower(0.8);
     Robot::intake->SetIsShooting(true);
     switchPID = false;
+    
 
 }
 
@@ -54,10 +56,10 @@ int isAimedCount = 0;
 double shooterSetSpeed = 0;
 float hoodHighClosestValue = -4.8; //value become more negative the further away we get
 float hoodMediumHighestValue = -6;
-int hoodTargetPos = 0;
+
 
 void ShootHigh::Execute() {
-    if (Robot::driveTrain->getLimeValidObject()) {
+    if (Robot::driveTrain->getLimeValidObject() || canShoot) {
         if (frc::Timer::GetFPGATimestamp() - shootingTimer > 1.5_s) {
             Robot::intake->SetRollerPower(0);
             Robot::intake->SetPusherPower(0);
@@ -90,21 +92,21 @@ void ShootHigh::Execute() {
             Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100, setPIDSlot);
         }
         if (!canShoot) {
-            if((Robot::driveTrain->autoAim(0) < 0.1)) {
+            if((Robot::driveTrain->autoAim(0) < 0.05)) {
                 isAimedCount++;
             }
         }
         else {
             isAimedCount = 0;
         }
-        if (isAimedCount > 15) {
+        if (isAimedCount > 20) {
             canShoot = true;
             Robot::driveTrain->SetLeftPower(0);
             Robot::driveTrain->SetRightPower(0);
         }
         if (canShoot && (Robot::shooter->GetCurrentHoodPosition() == hoodTargetPos)) {
             Robot::intake->SetIsShooting(true);
-            if(Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 75, setPIDSlot)){
+            if(Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 30, setPIDSlot)){
                 setPIDSlot = 1;
                 Robot::intake->SetIndexerPower(-0.75);
                 Robot::intake->SetHopperPower(0.7);
@@ -115,9 +117,9 @@ void ShootHigh::Execute() {
     else { // if no valid target assume we are against the hub
        Robot::shooter->SetHoodCloseShot();
         if (Robot::shooter->GetCurrentHoodPosition() == 1) { //wait for hood to be in close shot position
-            if (Robot::shooter->SetShooterVelocity(3600, 50)) {
+            if (Robot::shooter->SetShooterVelocity(3475, 50)) {
                 Robot::intake->SetIsShooting(true);
-                Robot::intake->SetIndexerPower(-0.4);
+                Robot::intake->SetIndexerPower(-0.7);
             }
             else {
                 Robot::intake->SetIndexerPower(0);

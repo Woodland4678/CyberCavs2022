@@ -78,6 +78,12 @@ double positionSecondBall=-12.1;
 int ballCounterState = 0;
 int ballShotState = 0;
 
+float redPercent = 0;
+float bluePercent = 0;
+float blueValue = 0;
+float redValue = 0;
+int countWrongBall = 0;
+
 void Intake::Periodic() {
     if (ballCount < 0) {
         ballCount = 0;
@@ -113,24 +119,38 @@ void Intake::Periodic() {
         break;
     }
     if (isIntakeDeployed) {
-        if (colourSensor.GetProximity0() > 300) {
-            if (GetAllianceColour() == 0) { //on Red alliance
-                // if (detectedColour.blue > 0.4 && detectedColour.red < 0.3) {
-                //     wrongBallDetected = true;
-                // }
-                if (colourSensor.GetRawColor0().blue > colourSensor.GetRawColor0().red) {
-                     wrongBallDetected = true;
-                 }
-            }
-            else if (GetAllianceColour() == 1) { //on Blue alliance
-                // if (detectedColour.red > 0.4 && detectedColour.blue < 0.3) {
-                //     wrongBallDetected = true;
-                // }
-                if (colourSensor.GetRawColor0().red > colourSensor.GetRawColor0().blue) {
-                     wrongBallDetected = true;
+        if (colourSensor.GetProximity0() > 700) {
+            blueValue = colourSensor.GetRawColor0().blue;
+            redValue = colourSensor.GetRawColor0().red;
+            //totalRed += colourSensor.GetRawColor0().red;
+            //totalBlue += colourSensor.GetRawColor0().blue;
+            //countWrongBall++;
+            if ((colourSensor.GetRawColor0().red + colourSensor.GetRawColor0().blue) != 0) { //make sure we aren't dividing by 0
+                bluePercent = blueValue / (redValue + blueValue);
+                redPercent = redValue / (redValue + blueValue);
+                frc::SmartDashboard::PutNumber("blue ratio", bluePercent);
+                frc::SmartDashboard::PutNumber("red ratio", redPercent);
+                if (GetAllianceColour() == 0) { //on Red alliance
+                    // if (detectedColour.blue > 0.4 && detectedColour.red < 0.3) {
+                    //     wrongBallDetected = true;
+                    // }
+                    if (bluePercent - redPercent > 0.1) { //if blue percent is 10% more than we have the wrong ball
+                        wrongBallDetected = true;
+                    }
+                }
+                else if (GetAllianceColour() == 1) { //on Blue alliance
+                    // if (detectedColour.red > 0.4 && detectedColour.blue < 0.3) {
+                    //     wrongBallDetected = true;
+                    // }
+                    if (redPercent - bluePercent > 0.1) {
+                        wrongBallDetected = true;
+                    }
+                    
                 }
             }
+        
         }
+        
     }
     if (wrongBallDetected) {
         pusherMotor.Set(-0.8);
@@ -147,6 +167,8 @@ void Intake::Periodic() {
             SetHopperPower(0.8);
             reverseIntakeCount = 0;
             wrongBallDetected = false;
+            bluePercent = 0;
+            redPercent = 0;
         }
     }
     frc::SmartDashboard::PutNumber("Index Stage", indexStage);
@@ -183,6 +205,7 @@ void Intake::Periodic() {
     //detectedColour = m_ColourSensor.GetColor();
     //matchedColour = m_ColourMatcher.MatchClosestColor(detectedColour, m_Confidence);
     //m_Proximity = m_ColourSensor.GetProximity();
+   
     frc::SmartDashboard::PutNumber("Detected Colour R", colourSensor.GetRawColor0().red);
     frc::SmartDashboard::PutNumber("Detected Colour G", detectedColour.green);
     frc::SmartDashboard::PutNumber("Detected Colour B", colourSensor.GetRawColor0().blue);

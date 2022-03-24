@@ -11,6 +11,7 @@
 
 Auto2Ball::Auto2Ball(): frc::Command() {
   Requires(Robot::driveTrain.get());
+  Requires(Robot::shooter.get());
   // Use addRequirements() here to declare subsystem dependencies.
 }
 
@@ -47,12 +48,12 @@ void Auto2Ball::Initialize() {
     // path4->addWayPoint(-6.858, 3.186, -450,0.007); 
     // path4->addWayPoint(-7.277, 2.261, -480,0.007); 
     // path4->makePath();
-    path1 = new PathFinder(3,2,0.4,0);
+    path1 = new PathFinder(2,2,0.4,1);
     path1->setStartPoint(0,0, 0); 
     //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-    path1->splineTo(1,-3, 0, 0, -2.2,-2.0,0,5000); //2.44, 0, 0 - meters
+    path1->splineTo(1,-3, 0, 0, -2.2,-0.5,0,5000); //2.44, 0, 0 - meters
 
-    path2 = new PathFinder(2.5,2.0,0.37,0);
+    path2 = new PathFinder(2.5,2.0,0.37,1);
     path2->setStartPoint(-3, 0, 0); 
     path2->splineTo(1,-1,0, 0,2.5,2.0,0,5000); //-3.248, 1.524
     //path2->splineTo(2,-0.58, 2.013, 106.09,-2.0,-2.0,0,5000); //-3.810, 0.762, -180
@@ -64,20 +65,27 @@ void Auto2Ball::Initialize() {
     Robot::driveTrain->resetGyro();
     cnt = 0;
     Robot::shooter->SetHoodFarShot();
+    autoStep = 0;
 
 }
 
 // Called repeatedly when this Command is scheduled to run
 auto auto2BallOriginalTime = frc::Timer::GetFPGATimestamp();
 int autoAimCnt = 0;
+double twoBallCalculatedAutoShooterSpeed = 0;
+double twoBallTargetVertical = 0;
 void Auto2Ball::Execute() {
     switch(autoStep) {
     case BACKUPTOFIRSTBALL:
       Robot::intake->DeployIntake();
+      Robot::intake->SetRollerPower(0.8);
+      Robot::intake->SetPusherPower(0.8);
+      Robot::intake->SetHopperPower(0.5);
       Robot::intake->SetIsDeployed(true);
       Robot::shooter->SetShooterVelocity(3800, 150);
       if(path1->processPath()) {
         autoStep = AUTOAIM;
+        Robot::driveTrain->setLimeLED(true);
       }
     break;
     case DRIVEFORWARDTOSHOOT:
@@ -86,6 +94,8 @@ void Auto2Ball::Execute() {
       }
     break;
     case AUTOAIM:
+      twoBallTargetVertical = Robot::driveTrain->getLimeVertical();
+      twoBallCalculatedAutoShooterSpeed = 4.2858 * twoBallTargetVertical * twoBallTargetVertical + 4.206434 * twoBallTargetVertical + 3539.6577;
       if (Robot::driveTrain->autoAim(0) < 0.05) {
         autoAimCnt++;
       }
@@ -97,7 +107,8 @@ void Auto2Ball::Execute() {
       }
     break;
     case SHOOT:
-      if ( Robot::shooter->SetShooterVelocity(3800, 150)) {
+    
+      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 150)) {
         Robot::intake->SetIndexerPower(-0.4);
       }
       if (Robot::intake->GetBallCount() == 0) {
