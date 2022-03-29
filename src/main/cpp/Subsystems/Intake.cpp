@@ -64,6 +64,7 @@ void Intake::InitDefaultCommand() {
 
 frc::Color detectedColour;
 frc::Color matchedColour;
+bool isReversingIntake = false;
 bool isIntakeDeployed = false;
 bool wrongBallDetected = false;
 int reverseIntakeCount = 0;
@@ -85,39 +86,45 @@ float redValue = 0;
 int countWrongBall = 0;
 
 void Intake::Periodic() {
-    if (ballCount < 0) {
-        ballCount = 0;
-    }
-    switch (ballCounterState) {
-        case 0:
-            if (!GetLowSensor()) {
-                ballCount++;
-                ballCounterState++;
-                if (ballCount > 2) {
-                    ballCount = 2;
+
+    if (!isReversingIntake){    
+               
+        if (ballCount < 0) {
+            ballCount = 0;
+        }
+        switch (ballCounterState) {
+            case 0:
+                if (!GetLowSensor()) {
+                    ballCount++;
+                    ballCounterState++;
+                    if (ballCount > 2) {
+                        ballCount = 2;
+                    }
                 }
-            }
-        break;
-        case 1:
-            if (GetLowSensor()) {
-                ballCounterState = 0;
-            }
-        break;
+            break;
+            case 1:
+                if (GetLowSensor()) {
+                    ballCounterState = 0;
+                }
+            break;
+        }
+        switch (ballShotState) {
+            case 0:
+                if (!GetHighSensor()) {
+                    ballShotState++;
+                }
+            break;
+            case 1:
+                if (GetHighSensor()) {
+                    totalCargoShot++;
+                    ballCount--;
+                    ballShotState = 0;
+                }
+            break;
+        }
     }
-    switch (ballShotState) {
-        case 0:
-            if (!GetHighSensor()) {
-                ballShotState++;
-            }
-        break;
-        case 1:
-            if (GetHighSensor()) {
-                totalCargoShot++;
-                ballCount--;
-                ballShotState = 0;
-            }
-        break;
-    }
+
+   
     if (isIntakeDeployed) {
         if (colourSensor.GetProximity0() > 700) {
             blueValue = colourSensor.GetRawColor0().blue;
@@ -177,7 +184,7 @@ void Intake::Periodic() {
     frc::SmartDashboard::PutNumber("Balls Shot",  totalCargoShot);
     // Put code here to be run every loop
         //hopperMotor->Set(1);
-        if ((isIntakeDeployed) && (ballCount==1) && (indexStage == FINISH)){
+        if ((isIntakeDeployed) && (ballCount==1) && (indexStage == FINISH) && (!isReversingIntake)){
             indexerMotor.Set(0.5);
             ballCount--; // ballCount == 0
             indexStage = WAITINGFIRSTBALL;
@@ -186,7 +193,7 @@ void Intake::Periodic() {
         
         //if (ballCount < 2 && !isShooting) {
             
-        if (!isShooting) { 
+        if ((!isShooting) && (!isReversingIntake)) { 
             Index();        
         }    
         if (ballCount == 0) {
@@ -276,6 +283,16 @@ int Intake::GetColourSensorProximity() {
 void Intake::SetIsShooting(bool setShootingStatus){
     isShooting = setShootingStatus;
 }
+
+void Intake::SetIsReversing(bool setReverseStatus){
+    isReversingIntake = setReverseStatus;
+}
+
+
+void Intake::ResetIndexStage(){
+    indexStage = WAITINGFIRSTBALL;
+}
+
 auto indexTimer = 0_s;
 bool Intake::Index(){
     switch(indexStage){
@@ -283,9 +300,6 @@ bool Intake::Index(){
             if(GetLowSensor() == false){  // when we see the ball
                 indexerMotor.Set(-1);
                 indexStage=INDEXFIRSTBALL;
-                // if (ballCount==0){
-                //     ballCount++;
-                // }
             }
             break;
 
