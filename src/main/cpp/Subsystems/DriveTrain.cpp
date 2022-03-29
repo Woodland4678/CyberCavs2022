@@ -81,6 +81,8 @@ const double Lime_robot_angle = 26.51654413;
 const double mAA_p = 0.65; //29
 const double mAA_i = 0.01; //0.001
 const double mAA_d = 0.00;
+
+bool isHighGear = false;
 DriveTrain::DriveTrain() : frc::Subsystem("DriveTrain") {
     leftDrivePidController.SetP(V_leftP,0);
     leftDrivePidController.SetI(V_leftI,0);
@@ -197,11 +199,16 @@ void DriveTrain::Periodic() {
 }
 void DriveTrain::ShiftUp() {
     shifter->Set(frc::Relay::kForward);
+    isHighGear = true;
     location.inLowSpeed = false;
 }
 void DriveTrain::ShiftDown() {
     shifter->Set(frc::Relay::kReverse);
+    isHighGear = false;
     location.inLowSpeed = true;
+}
+bool DriveTrain::GetIsHighGear() {
+    return isHighGear;
 }
 
 double DriveTrain::getGyroReading(){

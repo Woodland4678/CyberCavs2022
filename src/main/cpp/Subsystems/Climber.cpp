@@ -33,12 +33,12 @@
 // Climber Positions for Competition Bot.
 double horizontalPosition = 12.0; // 3.5 not far up enough. 20.5 too far
 double straightUpPosition = -86.09;
-double grabHighBarPosition = 65.0; //58.5
+double grabHighBarPosition = 66.0; //58.5
 double liftOffMediumBarPosition = -5.0;
 double swingToTraverseBarPosition = 245; // -259
 double grabTraverseBarPosition = 227.0;
 double finalSwingPosition = 169.5;
-double liftOffHighBarPosition = 150.0;
+double liftOffHighBarPosition = 130.0;
 
 #define DEFAULT_ACCEL 3500
 #define DEFAULT_DECEL 3500
@@ -150,6 +150,7 @@ void Climber::SetClimberPower(double pwr) {
     climberLeaderMotor.Set(pwr);
 }
 void Climber::SetClimberMode(bool climberMode) {
+    climbState = 0;
     isClimbing = climberMode;
 }
 bool Climber::GetClimberMode() {
@@ -208,7 +209,8 @@ bool Climber::CalibrateClimber(){
          if (fpt != NULL)
             fprintf(fpt,"Cal Exceeded Pos=%f, Cal Angle = %f, Set To=%f\n",GetClimberPosition(),calibrateAngle,horizontalPosition + (GetClimberPosition() - calibrateAngle));
          climberEncoder.SetPosition(horizontalPosition + (GetClimberPosition() - calibrateAngle)); // Set position as if it was correct to start with.
-         return true;
+         printf("CLIMBER Set Position to %f, %f,%f,%f\n\r",(GetClimberPosition() - calibrateAngle),horizontalPosition,GetClimberPosition(),calibrateAngle);
+return true;
          }
     if (!calibrateLimit->Get() &&isClicked){
         SetClimberVelocity(-500);
@@ -218,6 +220,7 @@ bool Climber::CalibrateClimber(){
         SetClimberVelocity(500);
         isClicked=false;
     }else{
+        printf("Climber Set Position to %f\n\r",horizontalPosition);
         climberEncoder.SetPosition(horizontalPosition);
         isClicked = true;
         climberLeaderMotor.StopMotor();

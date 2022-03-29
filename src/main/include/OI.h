@@ -41,6 +41,7 @@ std::shared_ptr<frc::JoystickButton> driver_Btn8_RT;
 
 std::shared_ptr<frc::JoystickButton> operator_Btn1_X;
 std::shared_ptr<frc::JoystickButton> operator_Btn3_B;
+std::shared_ptr<frc::JoystickButton> operator_Btn7_LT;
 
 
 

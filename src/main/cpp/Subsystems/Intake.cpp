@@ -214,7 +214,8 @@ void Intake::Periodic() {
 
 }
 int Intake::GetAllianceColour() {
-    return frc::DriverStation::GetInstance().GetAlliance();
+    //return frc::DriverStation::GetInstance().GetAlliance();
+    return 3;
 }
 void Intake::DeployIntake() {
     // if (ballCount == 1) {

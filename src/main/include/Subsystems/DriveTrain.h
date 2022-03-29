@@ -137,6 +137,7 @@ DriveTrain();
 	void resetEncoders();
 	void resetPosition();
 
+	bool GetIsHighGear();
 	
 
 	void setStart(double x, double y, double angle);

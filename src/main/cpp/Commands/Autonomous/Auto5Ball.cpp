@@ -23,7 +23,7 @@ void Auto5Ball::Initialize() {
   path1 = new PathFinder(2,2,0.71,1);
   path1->setStartPoint(-2.275,-0.674, -1.5); 
   //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-  path1->splineTo(1,-3.241,-0.674, 0, -3,-0.3,0,5000); //2.44, 0, 0 - meters
+  path1->splineTo(1,-3.121,-0.674, 0, -3,-0.3,0,5000); //-3.241, 0, 0 - meters
   
 
   //path2 = new PathFinder(1.8,1,0.71,1);
@@ -32,7 +32,7 @@ void Auto5Ball::Initialize() {
 
   path3 = new PathFinder(2.5,1,0.71,1);
   path3->setStartPoint(0,0,0); 
-  path3->splineTo(1,2.28,0,0, 3.5,0.8,0,5000);
+  path3->splineTo(1,2.43,0,0, 3.5,0.8,0,5000); //2.28
   
   // path3 = new PathFinder(1.5,1,0.71,1);
   // path3->setStartPoint(-3.341,-0.674, 0); 
@@ -121,7 +121,7 @@ void Auto5Ball::Execute() {
         //   Robot::intake->SetRollerPower(0);
         //   Robot::intake->SetPusherPower(0);
         // }
-        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2.5_s) {
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.75_s) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
         }
@@ -162,8 +162,8 @@ void Auto5Ball::Execute() {
           stopDrivingBack = true;
         }
         if (!stopDrivingBack) {
-          Robot::driveTrain->SetLeftPower(0.06);
-          Robot::driveTrain->SetRightPower(0.06);
+          Robot::driveTrain->SetLeftPower(0.075);
+          Robot::driveTrain->SetRightPower(0.075);
         }
         else {
           Robot::driveTrain->SetLeftPower(0);
@@ -195,7 +195,7 @@ void Auto5Ball::Execute() {
           // Generate Path 5 on-the-fly starting at measured location, ending up by final ball.
           printf("Path5 set Start Point...\n\r");
           path5->setStartPoint(Robot::driveTrain->location.locx/100.0,Robot::driveTrain->location.locy/100.0,360.0-Robot::driveTrain->location.heading); 
-          path5->splineTo(1,-2.508,-6.548,55,-3.5,-0.75,0,5000); 
+          path5->splineTo(1,-2.408,-6.648,51,-3.5,-0.75,0,5000); 
           
         }
         
@@ -220,7 +220,7 @@ void Auto5Ball::Execute() {
         }
       break;
       case MOVETOGRABFINALBALLS:
-        printf("Path5->processPath\n\r");
+        //printf("Path5->processPath\n\r");
         if(path5->processPath()) {
           autoStep = DELAYTOGETFINABALLS;
           autoOriginalTime = frc::Timer::GetFPGATimestamp();
@@ -248,7 +248,8 @@ void Auto5Ball::Execute() {
       break;
       case FINALAUTOAIM:
         autoTargetVertical = Robot::driveTrain->getLimeVertical();
-        calculatedAutoShooterSpeed = 4.2858 * autoTargetVertical * autoTargetVertical + 4.206434 * autoTargetVertical + 3539.6577;
+        //calculatedAutoShooterSpeed = 4.2858 * autoTargetVertical * autoTargetVertical + 4.206434 * autoTargetVertical + 3494.6577;
+        calculatedAutoShooterSpeed = Robot::shooter->CalcRPMFarShot(autoTargetVertical);
         if (Robot::driveTrain->autoAim(0) < 0.05) {
           isAimedAutoCount++;
           
@@ -361,8 +362,10 @@ void Auto5Ball::Execute() {
 
 // Called once the command ends or is interrupted.
 void Auto5Ball::End() {
+  Robot::intake->SetIndexerPower(0);
   Robot::driveTrain->SetLeftPower(0);
   Robot::driveTrain->SetRightPower(0);
+  Robot::intake->SetIsShooting(false);
 }
 
 // Returns true when the command should end.

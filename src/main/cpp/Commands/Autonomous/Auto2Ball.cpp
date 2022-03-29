@@ -17,6 +17,7 @@ Auto2Ball::Auto2Ball(): frc::Command() {
 
 // Called when the command is initially scheduled.
 void Auto2Ball::Initialize() {
+  Robot::driveTrain->ShiftUp();
     // path1 = new PathFinder(0.02,0,2,2,1.5,1,0.7112);  // cycle time (s), max velocity (m/s), max acceleration (m/s^2), max jerk (m/s^3), distance between wheels (m)
     // path1->createNewPath();
     // path1->addWayPoint(-1.080, 2.275, 0,0.007);  // -X is in front of robot, X is behind, Y is left, -Y is right
@@ -51,7 +52,7 @@ void Auto2Ball::Initialize() {
     path1 = new PathFinder(2,2,0.4,1);
     path1->setStartPoint(0,0, 0); 
     //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-    path1->splineTo(1,-3, 0, 0, -2.2,-0.5,0,5000); //2.44, 0, 0 - meters
+    path1->splineTo(1,-3.3, 0, 0, -2.2,-0.5,0,5000); //2.44, 0, 0 - meters
 
     path2 = new PathFinder(2.5,2.0,0.37,1);
     path2->setStartPoint(-3, 0, 0); 
@@ -95,20 +96,21 @@ void Auto2Ball::Execute() {
     break;
     case AUTOAIM:
       twoBallTargetVertical = Robot::driveTrain->getLimeVertical();
-      twoBallCalculatedAutoShooterSpeed = 4.2858 * twoBallTargetVertical * twoBallTargetVertical + 4.206434 * twoBallTargetVertical + 3539.6577;
+      //twoBallCalculatedAutoShooterSpeed = 4.2858 * twoBallTargetVertical * twoBallTargetVertical + 4.206434 * twoBallTargetVertical + 3474.6577;
+      twoBallCalculatedAutoShooterSpeed = Robot::shooter->CalcRPMFarShot(twoBallTargetVertical);
       if (Robot::driveTrain->autoAim(0) < 0.05) {
         autoAimCnt++;
       }
       else {
         autoAimCnt = 0;
       }
-      if (autoAimCnt > 10) {
+      if (autoAimCnt > 30) {
         autoStep = SHOOT;
       }
     break;
     case SHOOT:
     
-      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 150)) {
+      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 50)) {
         Robot::intake->SetIndexerPower(-0.4);
       }
       if (Robot::intake->GetBallCount() == 0) {
@@ -127,5 +129,5 @@ void Auto2Ball::End() {}
 // Returns true when the command should end.
 bool Auto2Ball::IsFinished() { return done; }
 void Auto2Ball::Interrupted() {
-
+  Robot::intake->SetIndexerPower(0);
 }

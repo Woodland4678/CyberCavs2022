@@ -68,6 +68,9 @@ void Robot::DisabledInit(){
 void Robot::DisabledPeriodic() {
 	
 	frc::Scheduler::GetInstance()->Run();
+	frc::SmartDashboard::PutNumber("joystick x", oi->getDriverGamepad()->GetX());
+	frc::SmartDashboard::PutNumber("joystick y", oi->getDriverGamepad()->GetY());
+	
 }
 
 void Robot::AutonomousInit() {
@@ -90,10 +93,12 @@ void Robot::TeleopInit() {
 }
 
 void Robot::TeleopPeriodic() {
+	
 	frc::Scheduler::GetInstance()->Run();
 	if (oi->getOperatorGamepad()->GetPOV() == 180) { //Reverse intake
 		intake->SetHopperPower(-0.5);
-		intake->SetPusherPower(0.8);
+		intake->SetPusherPower(-0.8);
+		intake->SetIndexerPower(0.2);
 		intake->SetRollerPower(-0.8);
 	}
 
