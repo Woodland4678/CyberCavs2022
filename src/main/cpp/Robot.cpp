@@ -95,12 +95,15 @@ void Robot::TeleopInit() {
 void Robot::TeleopPeriodic() {
 	
 	frc::Scheduler::GetInstance()->Run();
+
+	/*
 	if (oi->getOperatorGamepad()->GetPOV() == 180) { //Reverse intake
 		intake->SetHopperPower(-0.5);
 		intake->SetPusherPower(-0.8);
 		intake->SetIndexerPower(0.2);
 		intake->SetRollerPower(-0.8);
 	}
+	*/
 
 	if (oi->getOperatorGamepad()->GetRawButton(8)) { // force shoot
 		shooter->SetHoodHighGoal();

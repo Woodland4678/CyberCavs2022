@@ -91,9 +91,12 @@ Intake();
 	bool GetIsDeployed();
 
 	void SetIsShooting(bool setShootingStatus);
+	void SetIsReversing(bool setReverseStatus);	
 
 	int GetBallCount();
 	int GetTotalCargoShot();
+
+	void ResetIndexStage();
 
 	enum {
 		WAITINGFIRSTBALL,

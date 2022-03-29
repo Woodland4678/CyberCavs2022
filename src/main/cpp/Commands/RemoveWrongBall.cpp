@@ -33,8 +33,7 @@ void RemoveWrongBall::Initialize() {
 // Called repeatedly when this Command is scheduled to run
 void RemoveWrongBall::Execute() {
    Robot::intake->SetHopperPower(0.7);
-   Robot::intake->SetIndexerPower(-0.2
-   );
+   Robot::intake->SetIndexerPower(-0.2);
    Robot::shooter->SetShooterVelocity(1000, 150);
 }
 
