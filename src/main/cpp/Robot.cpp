@@ -115,6 +115,9 @@ void Robot::TeleopPeriodic() {
 	if (oi->getOperatorGamepad()->GetRawButton(5)) { // Set ballCount = 0
 		intake->SetBallCount(0);
 	}
+	if (oi->getDriverGamepad()->GetPOV() == 90) {
+		intake->CloseFile();
+	}
 }
 
 #ifndef RUNNING_FRC_TESTS

@@ -86,6 +86,7 @@ Intake();
 
 	bool Index();
 	void CheckNumberOfBallOut();
+	void ResetBallCounterState();
 
 	void SetIsDeployed(bool setDeployStatus);
 	bool GetIsDeployed();
@@ -97,6 +98,10 @@ Intake();
 	int GetTotalCargoShot();
 
 	void ResetIndexStage();
+
+	void CloseFile();
+
+	void ResetBallShotState();
 
 	enum {
 		WAITINGFIRSTBALL,

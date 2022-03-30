@@ -98,7 +98,7 @@ void Auto2Ball::Execute() {
       twoBallTargetVertical = Robot::driveTrain->getLimeVertical();
       //twoBallCalculatedAutoShooterSpeed = 4.2858 * twoBallTargetVertical * twoBallTargetVertical + 4.206434 * twoBallTargetVertical + 3474.6577;
       twoBallCalculatedAutoShooterSpeed = Robot::shooter->CalcRPMFarShot(twoBallTargetVertical);
-      if (Robot::driveTrain->autoAim(0) < 0.05) {
+      if (Robot::driveTrain->autoAim(-1) < 0.05) {
         autoAimCnt++;
       }
       else {

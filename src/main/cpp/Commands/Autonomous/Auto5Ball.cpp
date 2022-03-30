@@ -152,7 +152,7 @@ void Auto5Ball::Execute() {
         }
       break;
       case FIRSTAUTOAIM:
-        if (Robot::driveTrain->autoAim(0) < 0.05) {
+        if (Robot::driveTrain->autoAim(-1) < 0.05) {
           autoStep = SHOOTFIRSTTWOBALLS;
           autoOriginalTime = frc::Timer::GetFPGATimestamp();
         }
@@ -250,7 +250,7 @@ void Auto5Ball::Execute() {
         autoTargetVertical = Robot::driveTrain->getLimeVertical();
         //calculatedAutoShooterSpeed = 4.2858 * autoTargetVertical * autoTargetVertical + 4.206434 * autoTargetVertical + 3494.6577;
         calculatedAutoShooterSpeed = Robot::shooter->CalcRPMFarShot(autoTargetVertical);
-        if (Robot::driveTrain->autoAim(0) < 0.05) {
+        if (Robot::driveTrain->autoAim(-1) < 0.05) {
           isAimedAutoCount++;
           
         }
@@ -264,7 +264,7 @@ void Auto5Ball::Execute() {
         }
       break;
       case SHOOTFINALBALLS:
-        Robot::driveTrain->autoAim(0);
+        Robot::driveTrain->autoAim(-1);
         Robot::intake->SetIsShooting(true);
         Robot::intake->SetHopperPower(0.8);
         if (Robot::shooter->SetShooterVelocity(calculatedAutoShooterSpeed, 50)) {

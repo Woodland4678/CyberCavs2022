@@ -32,6 +32,7 @@ int setPIDSlot = 0;
 // Called just before this Command runs the first time
 int hoodTargetPos = 0;
 void ShootHigh::Initialize() {
+    Robot::driveTrain->ShiftDown();
     Robot::shooter->SetHoodFarShot();
     frc::SmartDashboard::PutNumber("Shooter P", kP);
     frc::SmartDashboard::PutNumber("Shooter I", kI);
@@ -98,7 +99,7 @@ void ShootHigh::Execute() {
             Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100, setPIDSlot);
         }
         if (!canShoot) {
-            if((Robot::driveTrain->autoAim(0) < 0.05)) {
+            if((Robot::driveTrain->autoAim(-1) < 0.09)) {
                 isAimedCount++;
             }
         }

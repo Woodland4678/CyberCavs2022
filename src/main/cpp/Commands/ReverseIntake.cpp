@@ -37,6 +37,23 @@ bool lostFirstOne= false;
 
 // Called repeatedly when this Command is scheduled to run
 void ReverseIntake::Execute() {
+    if (Robot::intake->GetBallCount() == 2) {
+        Robot::intake->SetHopperPower(-0.8);
+        Robot::intake->SetPusherPower(-0.7);
+        Robot::intake->SetRollerPower(-0.7);
+        if (Robot::intake->GetLowSensor() == true) {
+            Robot::intake->SetIndexerPower(0);
+        }
+        else {
+            Robot::intake->SetIndexerPower(0.4);
+        }
+    }
+    else if (Robot::intake->GetBallCount() < 2) {
+        Robot::intake->SetHopperPower(-0.8);
+        Robot::intake->SetPusherPower(-0.7);
+        Robot::intake->SetRollerPower(-0.7);
+        Robot::intake->SetIndexerPower(0.7);
+    }
     /*
     if (Robot::intake->GetBallCount()>0){
 
@@ -75,12 +92,12 @@ void ReverseIntake::Execute() {
   
         
     }  */
-    Robot::intake->SetIndexerPower(0.2);
+    // Robot::intake->SetIndexerPower(0.2);
 
 
-    Robot::intake->SetHopperPower(-0.7);
-    Robot::intake->SetPusherPower(-0.7);
-    Robot::intake->SetRollerPower(-0.7);
+    // Robot::intake->SetHopperPower(-0.7);
+    // Robot::intake->SetPusherPower(-0.7);
+    // Robot::intake->SetRollerPower(-0.7);
 
 }
 
@@ -103,17 +120,19 @@ void ReverseIntake::End() {
     lostFirstOne = false;
     doneReverse = false;
     */
+    // Robot::intake->SetBallCount(0);
+    // Robot::intake->ResetBallCounterState();
+     Robot::intake->SetIsReversing(false);  
 
-    Robot::intake->SetIsReversing(false);  
-
-    Robot::intake->SetPusherPower(0);
-    Robot::intake->SetHopperPower(0);
-    Robot::intake->SetIndexerPower(0);
-    Robot::intake->SetRollerPower(0);
+     Robot::intake->SetPusherPower(0);
+     Robot::intake->SetHopperPower(0);
+     Robot::intake->SetIndexerPower(0);
+     Robot::intake->SetRollerPower(0);
+     Robot::intake->ResetBallShotState();
     
-    Robot::intake->SetBallCount(0);
-    Robot::intake->ResetIndexStage();
-
+    // Robot::intake->ResetIndexStage();
+    Robot::intake->SetBallCount(Robot::intake->GetBallCount() - 1);
+    
 
 }
 
