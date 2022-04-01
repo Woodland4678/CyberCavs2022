@@ -62,8 +62,6 @@ operator_Btn3_B.reset(new frc::JoystickButton(operatorGamepad.get(), 3));
 operator_Btn3_B->WhenPressed(new ClimbReset());
 operator_Btn7_LT.reset(new frc::JoystickButton(operatorGamepad.get(), 7));
 operator_Btn7_LT->WhileHeld(new RemoveWrongBall());
-
-
 operator_Btn6_RB.reset(new frc::JoystickButton(operatorGamepad.get(), 6));
 operator_Btn6_RB->WhileHeld(new ReverseIntake());
 

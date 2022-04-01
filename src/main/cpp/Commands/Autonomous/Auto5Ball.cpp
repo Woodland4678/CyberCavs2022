@@ -49,7 +49,7 @@ void Auto5Ball::Initialize() {
 
   path6 = new PathFinder(3,1,0.71,1);
   path6->setStartPoint(0,0,0); 
-  path6->splineTo(1,3.2,0.7,40,3.5,1.2,0,5000);
+  path6->splineTo(1,3.2,2.2,40,3.5,1.2,0,5000); //0.7 for y
 
   path5 = new PathFinder(2,1,0.71,1);
 
@@ -121,7 +121,7 @@ void Auto5Ball::Execute() {
         //   Robot::intake->SetRollerPower(0);
         //   Robot::intake->SetPusherPower(0);
         // }
-        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.75_s) {
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.5_s) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
         }

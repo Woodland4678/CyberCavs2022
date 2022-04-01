@@ -201,11 +201,15 @@ void DriveTrain::ShiftUp() {
     shifter->Set(frc::Relay::kForward);
     isHighGear = true;
     location.inLowSpeed = false;
+    leftDriveFollowMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
+    rightDriveFollowMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kCoast);
 }
 void DriveTrain::ShiftDown() {
     shifter->Set(frc::Relay::kReverse);
     isHighGear = false;
     location.inLowSpeed = true;
+    leftDriveFollowMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
+    rightDriveFollowMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
 }
 bool DriveTrain::GetIsHighGear() {
     return isHighGear;

@@ -371,6 +371,8 @@ void Climber::Climb(){
                 climbSubState = VERTICALTOFROMMIDBAR; // We're at position, move on.
                 climbState = 1;
                 }
+            climberLeaderMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake); //make sure we are in brake mode
+            climberFollowerMotor.SetIdleMode(rev::CANSparkMax::IdleMode::kBrake);
             break;
         case 1: // We have calibrate point.  Read to climb up (or down)
             if (pov == 0) // Up button held

@@ -207,7 +207,7 @@ double Shooter::GetCurrentRPM() {
     return shooterEncoder.GetVelocity();
 }
 double Shooter::CalcRPMFarShot(double currentLimeVertical) {
-    return 4.2858 * currentLimeVertical * currentLimeVertical + 4.206434 * currentLimeVertical + 4494.6577; //3429 was 3429.6577 at waterloo day 1 was 3494.6577 at end of waterloo day 2
+    return 4.2858 * currentLimeVertical * currentLimeVertical + 4.206434 * currentLimeVertical + 3494.6577; //3429 was 3429.6577 at waterloo day 1 was 3494.6577 at end of waterloo day 2
     //return 5100;
 }
 double Shooter::CalcRPMMediumShot(double currentLimeVertical) {
