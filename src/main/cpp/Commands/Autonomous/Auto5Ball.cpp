@@ -32,7 +32,7 @@ void Auto5Ball::Initialize() {
 
   path3 = new PathFinder(2.5,1,0.71,1);
   path3->setStartPoint(0,0,0); 
-  path3->splineTo(1,2.43,0,0, 3.5,0.8,0,5000); //2.28
+  path3->splineTo(1,2.33,0,0, 3.5,0.8,0,5000); //2.48
   
   // path3 = new PathFinder(1.5,1,0.71,1);
   // path3->setStartPoint(-3.341,-0.674, 0); 
@@ -140,13 +140,13 @@ void Auto5Ball::Execute() {
         }
       break;
       case TURNTOTARGET:
-        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 2_s) {
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.35_s) {
           autoStep = FIRSTAUTOAIM;
           //Robot::driveTrain->setLimeLED(true);
         }
         Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
         //Robot::driveTrain->setLimeLED(true);
-        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), -60, 0.011, 0,0, 6)) {
+        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), -60, 0.014, 0,0, 5.5)) {
           autoStep = FIRSTAUTOAIM;
           
         }

@@ -42,8 +42,8 @@ class Auto5Ball
   int cnt = 0;
   bool done = false;
 
-  double shooterSpeedFirstTwoBalls = 3740; //3500 waterloo day 1
-  double shooterSpeedThirdBall = 3895; //3615 waterloo day 1
+  double shooterSpeedFirstTwoBalls = 3720; //3500 waterloo day 1 //3740 windsor morning
+  double shooterSpeedThirdBall = 3855; //3615 waterloo day 1
   double shooterSpeedFinalBalls = 3800;
 
   enum {

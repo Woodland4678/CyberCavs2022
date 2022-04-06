@@ -52,7 +52,7 @@ void Auto2Ball::Initialize() {
     path1 = new PathFinder(2,2,0.4,1);
     path1->setStartPoint(0,0, 0); 
     //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-    path1->splineTo(1,-3.3, 0, 0, -2.2,-0.5,0,5000); //2.44, 0, 0 - meters
+    path1->splineTo(1,-1.5, 0, 0, -2.2,-0.5,0,5000); //2.44, 0, 0 - meters
 
     path2 = new PathFinder(2.5,2.0,0.37,1);
     path2->setStartPoint(-3, 0, 0); 
