@@ -32,7 +32,7 @@ void Auto5Ball::Initialize() {
 
   path3 = new PathFinder(2.5,1,0.71,1);
   path3->setStartPoint(0,0,0); 
-  path3->splineTo(1,2.33,0,0, 3.5,0.8,0,5000); //2.48
+  path3->splineTo(1,2.22,0,0, 3.5,0.8,0,5000); //2.48
   
   // path3 = new PathFinder(1.5,1,0.71,1);
   // path3->setStartPoint(-3.341,-0.674, 0); 
@@ -49,7 +49,7 @@ void Auto5Ball::Initialize() {
 
   path6 = new PathFinder(3,1,0.71,1);
   path6->setStartPoint(0,0,0); 
-  path6->splineTo(1,3.2,2.2,40,3.5,1.2,0,5000); //0.7 for y
+  path6->splineTo(1,2.2,2.2,60,3.5,1.2,0,5000); //0.7 for y
 
   path5 = new PathFinder(2,1,0.71,1);
 
@@ -121,7 +121,7 @@ void Auto5Ball::Execute() {
         //   Robot::intake->SetRollerPower(0);
         //   Robot::intake->SetPusherPower(0);
         // }
-        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.5_s) {
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1_s) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
         }
@@ -146,24 +146,35 @@ void Auto5Ball::Execute() {
         }
         Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150);
         //Robot::driveTrain->setLimeLED(true);
-        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), -60, 0.014, 0,0, 5.5)) {
+        if (Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), -60, 0.02, 0,0, 40)) {
           autoStep = FIRSTAUTOAIM;
-          
+          isAimedAutoCount = 0;
+          Robot::driveTrain->ShiftDown();
         }
       break;
       case FIRSTAUTOAIM:
-        if (Robot::driveTrain->autoAim(-1) < 0.05) {
-          autoStep = SHOOTFIRSTTWOBALLS;
+        if (Robot::driveTrain->autoAim(-1) < 0.09) {
           autoOriginalTime = frc::Timer::GetFPGATimestamp();
+          isAimedAutoCount++;
         }
+        else {
+          isAimedAutoCount = 0;
+        }
+        if (isAimedAutoCount > 10) {
+          autoStep = SHOOTFIRSTTWOBALLS;
+          Robot::driveTrain->ShiftUp();
+          Robot::driveTrain->SetRightPower(0);
+          Robot::driveTrain->SetLeftPower(0);
+        }
+
       break;
       case SHOOTFIRSTTWOBALLS:
         if (Robot::intake->GetColourSensorProximity() > 300) { //means the third ball is coming in
           stopDrivingBack = true;
         }
         if (!stopDrivingBack) {
-          Robot::driveTrain->SetLeftPower(0.075);
-          Robot::driveTrain->SetRightPower(0.075);
+          Robot::driveTrain->SetLeftPower(0.11);
+          Robot::driveTrain->SetRightPower(0.11);
         }
         else {
           Robot::driveTrain->SetLeftPower(0);
@@ -251,8 +262,7 @@ void Auto5Ball::Execute() {
         //calculatedAutoShooterSpeed = 4.2858 * autoTargetVertical * autoTargetVertical + 4.206434 * autoTargetVertical + 3494.6577;
         calculatedAutoShooterSpeed = Robot::shooter->CalcRPMFarShot(autoTargetVertical);
         if (Robot::driveTrain->autoAim(-1) < 0.05) {
-          isAimedAutoCount++;
-          
+          isAimedAutoCount++; 
         }
         else {
           isAimedAutoCount = 0;
@@ -267,7 +277,7 @@ void Auto5Ball::Execute() {
         Robot::driveTrain->autoAim(-1);
         Robot::intake->SetIsShooting(true);
         Robot::intake->SetHopperPower(0.8);
-        if (Robot::shooter->SetShooterVelocity(calculatedAutoShooterSpeed, 50)) {
+        if (Robot::shooter->SetShooterVelocity(calculatedAutoShooterSpeed, 20)) {
           Robot::intake->SetIndexerPower(-0.4); //shoot
         }
         if (Robot::intake->GetBallCount() == 0) {

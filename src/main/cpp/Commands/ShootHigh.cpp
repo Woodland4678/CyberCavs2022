@@ -58,7 +58,7 @@ double targetVertical = 0;
 int isAimedCount = 0;
 double shooterSetSpeed = 0;
 float hoodHighClosestValue = -4.8; //value become more negative the further away we get
-float hoodMediumHighestValue = -6;
+float hoodMediumHighestValue = -6.2;
 
 
 void ShootHigh::Execute() {
@@ -113,7 +113,7 @@ void ShootHigh::Execute() {
         }
         if (canShoot && (Robot::shooter->GetCurrentHoodPosition() == hoodTargetPos)) {
             Robot::intake->SetIsShooting(true);
-            if(Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 30, setPIDSlot)){
+            if(Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 20, setPIDSlot)){
                 setPIDSlot = 1;
                 Robot::intake->SetIndexerPower(-0.75);
                 Robot::intake->SetHopperPower(0.7);

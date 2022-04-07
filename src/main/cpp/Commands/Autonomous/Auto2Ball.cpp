@@ -98,7 +98,7 @@ void Auto2Ball::Execute() {
       twoBallTargetVertical = Robot::driveTrain->getLimeVertical();
       //twoBallCalculatedAutoShooterSpeed = 4.2858 * twoBallTargetVertical * twoBallTargetVertical + 4.206434 * twoBallTargetVertical + 3474.6577;
       twoBallCalculatedAutoShooterSpeed = Robot::shooter->CalcRPMFarShot(twoBallTargetVertical);
-      if (Robot::driveTrain->autoAim(-1) < 0.05) {
+      if (Robot::driveTrain->autoAim(-1) < 0.06) {
         autoAimCnt++;
       }
       else {
@@ -106,17 +106,21 @@ void Auto2Ball::Execute() {
       }
       if (autoAimCnt > 30) {
         autoStep = SHOOT;
+        Robot::intake->SetIsShooting(true);
       }
     break;
     case SHOOT:
-    
-      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 50)) {
+      Robot::intake->SetHopperPower(0.7);
+      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 20)) {
         Robot::intake->SetIndexerPower(-0.4);
       }
+      else{
+        Robot::intake->SetIndexerPower(0);
+      }
       if (Robot::intake->GetBallCount() == 0) {
-        done = true;
+        //done = true;
         Robot::intake->RetractIntake();
-        Robot::shooter->StopShooterMotor();
+        
       }
     break;
     
@@ -124,10 +128,15 @@ void Auto2Ball::Execute() {
 }
 
 // Called once the command ends or is interrupted.
-void Auto2Ball::End() {}
+void Auto2Ball::End() {
+  Robot::intake->SetIndexerPower(0);
+  Robot::intake->SetIsShooting(false);
+  Robot::shooter->StopShooterMotor();
+}
 
 // Returns true when the command should end.
 bool Auto2Ball::IsFinished() { return done; }
 void Auto2Ball::Interrupted() {
-  Robot::intake->SetIndexerPower(0);
+  End();
+  
 }

@@ -481,6 +481,9 @@ bool DriveTrain::GyroTurn(double current, double turnAmount, double p, double i,
 	totalValue *= 0.65;
 	SetRightPower(-totalValue);
 	SetLeftPower(totalValue);
+    
+    
+    printf("gt,%f,%f,%f,%f,%f\n",current,gyroError,pValue,iValue,totalValue);
 
 
 	past = current;
@@ -489,7 +492,7 @@ bool DriveTrain::GyroTurn(double current, double turnAmount, double p, double i,
 	} else {
 		counter = 0;
 	}
-	if(counter >= 10){
+	if(counter >= 5){
 		past = 0;
 		iValue = 0;
 		counter = 0;
@@ -595,7 +598,7 @@ double DriveTrain::autoAim(double target){
 	double dValue = mAA_d*(past - current);
 	double totalValue = pValue + (mAA_i*iValue) + dValue;
 
-    printf("\nAA,%f,%f,%f,%f,%f",current,std::abs(error),pValue,iValue,totalValue);
+    // printf("\nAA,%f,%f,%f,%f,%f",current,std::abs(error),pValue,iValue,totalValue);
 
 	if(totalValue > 0.8)
 		totalValue = 0.8;
