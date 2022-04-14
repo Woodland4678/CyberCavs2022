@@ -121,7 +121,7 @@ void Auto5Ball::Execute() {
         //   Robot::intake->SetRollerPower(0);
         //   Robot::intake->SetPusherPower(0);
         // }
-        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1_s) {
+        if (frc::Timer::GetFPGATimestamp() - autoOriginalTime > 1.2_s) {
           autoStep = DRIVETOFIRSTSHOOT;
           Robot::driveTrain->setLimeLED(true);
         }
@@ -188,7 +188,7 @@ void Auto5Ball::Execute() {
           Robot::intake->SetHopperPower(1);
         }
         
-        if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)) {
+        if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)<=35) {
           Robot::intake->SetIsShooting(true);
           if (Robot::intake->GetTotalCargoShot() >= 2) {
             Robot::intake->SetIndexerPower(-1);
@@ -220,7 +220,7 @@ void Auto5Ball::Execute() {
       break;
       case SHOOTTHIRDBALL:
         Robot::intake->SetIsShooting(true);
-        if (Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 50)) {
+        if (Robot::shooter->SetShooterVelocity(shooterSpeedThirdBall, 50)<=35) {
           Robot::intake->SetIndexerPower(-1);
         }
         if (Robot::intake->GetBallCount() == 0  || ((frc::Timer::GetFPGATimestamp() - autoOriginalTime) > 1.5_s)) {
@@ -253,6 +253,7 @@ void Auto5Ball::Execute() {
         Robot::shooter->SetShooterVelocity(shooterSpeedFinalBalls, 50);
         if (path6->processPath()) {
           autoStep = FINALAUTOAIM;
+          Robot::driveTrain->ShiftDown();
           Robot::driveTrain->setLimeLED(true);
           isAimedAutoCount = 0;
         }
@@ -271,13 +272,14 @@ void Auto5Ball::Execute() {
           autoStep = SHOOTFINALBALLS;
           Robot::driveTrain->SetRightPower(0);
           Robot::driveTrain->SetLeftPower(0);
+
         }
       break;
       case SHOOTFINALBALLS:
         Robot::driveTrain->autoAim(-1);
         Robot::intake->SetIsShooting(true);
         Robot::intake->SetHopperPower(0.8);
-        if (Robot::shooter->SetShooterVelocity(calculatedAutoShooterSpeed, 20)) {
+        if (Robot::shooter->SetShooterVelocity(calculatedAutoShooterSpeed, 20)<=35) {
           Robot::intake->SetIndexerPower(-0.4); //shoot
         }
         if (Robot::intake->GetBallCount() == 0) {

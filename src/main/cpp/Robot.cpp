@@ -107,7 +107,7 @@ void Robot::TeleopPeriodic() {
 
 	if (oi->getOperatorGamepad()->GetRawButton(8)) { // force shoot
 		shooter->SetHoodHighGoal();
-		if (shooter->SetShooterVelocity(4000, 50)){
+		if (shooter->SetShooterVelocity(4000, 50)<=35){
 			intake->SetIndexerPower(-0.4);
 		}
 	}

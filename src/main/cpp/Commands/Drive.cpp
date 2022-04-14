@@ -121,8 +121,10 @@ void Drive::Execute() {
 
     //jx *= 0.7; //was here as of march 28 2022, not sure if needed, just seems to be to slow down turning
 
-    rrpm = (jy + jx);
-    lrpm = (jy - jx);
+   // rrpm = (jy + jx);
+   // lrpm = (jy - jx);
+   rrpm = jy + 0.75 * jx;
+   lrpm = jy - 0.75 * jx;
 
     // rrpm = multi*(rrpm) + (1-multi)*pr_rpm;
     // lrpm = multi*(lrpm) + (1-multi)*pl_rpm;
@@ -147,7 +149,7 @@ void Drive::Execute() {
     Robot::driveTrain->SetLeftPower(lrpm);
     Robot::driveTrain->SetRightPower(rrpm);
 
-    if (Robot::intake->GetBallCount() > 1 && !startedShooter) {
+    if (Robot::intake->GetBallCount() > 0 && !startedShooter) {
         Robot::shooter->SetShooterVelocity(3800, 100);
         Robot::driveTrain->setLimeLED(true);
         startedShooter = true;

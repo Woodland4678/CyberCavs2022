@@ -45,10 +45,21 @@ bool RemoveWrongBall::IsFinished() {
 
 // Called once after isFinished returns true
 void RemoveWrongBall::End() {
-    Robot::intake->SetHopperPower(0);
-    Robot::intake->SetIndexerPower(0);
+
     Robot::shooter->StopShooterMotor();
     Robot::intake->SetIsShooting(false);
+
+
+    if (Robot::intake->GetIsDeployed() == true){
+        Robot::intake->SetPusherPower(0.8);
+        Robot::intake->SetRollerPower(0.8);
+        Robot::intake->SetHopperPower(0.6);
+    }else{
+        Robot::intake->SetHopperPower(0);
+        Robot::intake->SetIndexerPower(0);
+        Robot::intake->SetRollerPower(0);
+        Robot::intake->SetPusherPower(0);
+    }
 }
 
 // Called when another command which requires one or more of the same

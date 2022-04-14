@@ -111,7 +111,7 @@ void Auto2Ball::Execute() {
     break;
     case SHOOT:
       Robot::intake->SetHopperPower(0.7);
-      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 20)) {
+      if ( Robot::shooter->SetShooterVelocity(twoBallCalculatedAutoShooterSpeed, 20)<=35) {
         Robot::intake->SetIndexerPower(-0.4);
       }
       else{

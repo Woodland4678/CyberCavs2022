@@ -40,7 +40,7 @@ void AutoAim::Execute() {
     Robot::shooter->SetHoodCloseShot();
     Robot::shooter->SetShooterVelocity(3475, 50);
     if (Robot::shooter->GetCurrentHoodPosition() == 1) { //give time for the hood to move
-        if (Robot::shooter->SetShooterVelocity(3475, 50)) {
+        if (Robot::shooter->SetShooterVelocity(3475, 50)<=35) {
             Robot::intake->SetIsShooting(true);
             Robot::intake->SetIndexerPower(-0.7);
             Robot::intake->SetHopperPower(0.7);

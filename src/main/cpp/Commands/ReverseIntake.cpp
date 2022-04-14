@@ -124,10 +124,17 @@ void ReverseIntake::End() {
     // Robot::intake->ResetBallCounterState();
      Robot::intake->SetIsReversing(false);  
 
-     Robot::intake->SetPusherPower(0);
-     Robot::intake->SetHopperPower(0);
-     Robot::intake->SetIndexerPower(0);
-     Robot::intake->SetRollerPower(0);
+    if (Robot::intake->GetIsDeployed() == true){
+        Robot::intake->SetPusherPower(0.8);
+        Robot::intake->SetRollerPower(0.8);
+        Robot::intake->SetHopperPower(0.6);
+    }else{
+        Robot::intake->SetPusherPower(0);
+        Robot::intake->SetHopperPower(0);
+        Robot::intake->SetIndexerPower(0);
+        Robot::intake->SetRollerPower(0);
+     }
+
      Robot::intake->ResetBallShotState();
     
     // Robot::intake->ResetIndexStage();
