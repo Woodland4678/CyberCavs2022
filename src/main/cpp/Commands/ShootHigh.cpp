@@ -38,7 +38,7 @@ void ShootHigh::Initialize() {
     //Robot::shooter->SetHoodFarShot();
     
     Robot::driveTrain->setLimeLED(true);
-    
+    Robot::shooter->SetPIDToSpinup(true);
     //Robot::intake->SetRollerPower(0.8);
     Robot::intake->SetPusherPower(0.7);
     Robot::intake->SetHopperPower(0.6);
@@ -123,9 +123,9 @@ void ShootHigh::Execute() {
             Robot::intake->SetIsShooting(true);
             double curVel = Robot::shooter->GetCurrentRPM();
             frc::SmartDashboard::PutNumber("shooterError", abs(calculatedShooterSpeed - curVel));
-            Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 45, setPIDSlot);
-            if(abs(calculatedShooterSpeed - curVel)<50){ /// 
-                setPIDSlot = 1;
+            Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 45, 0);
+            if(abs(calculatedShooterSpeed - curVel)<55){ /// 
+                //Robot::shooter->SetPIDToMaintain(false);
                 isShootingCargo = true;
                 Robot::intake->SetIndexerPower(-0.85);
                 Robot::intake->SetHopperPower(0.7);

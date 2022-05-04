@@ -37,18 +37,17 @@ void AutoAim::Initialize() {
 
 // Called repeatedly when this Command is scheduled to run
 void AutoAim::Execute() {
-    Robot::shooter->SetHoodCloseShot();
-    Robot::shooter->SetShooterVelocity(3475, 50);
-    if (Robot::shooter->GetCurrentHoodPosition() == 1) { //give time for the hood to move
-        if (Robot::shooter->SetShooterVelocity(3475, 50)<=35) {
+    Robot::shooter->SetHoodFarShot();
+    Robot::driveTrain->setLimeLED(false);
+    if (Robot::shooter->SetShooterVelocity(4000, 100)<=100) {
             Robot::intake->SetIsShooting(true);
-            Robot::intake->SetIndexerPower(-0.7);
+            Robot::intake->SetIndexerPower(-0.35);
             Robot::intake->SetHopperPower(0.7);
-        }
-        else {
-            Robot::intake->SetIndexerPower(0);
-        }
     }
+    else {
+            Robot::intake->SetIndexerPower(0);
+    }
+    
     //doneAutoAim = Robot::driveTrain->GyroTurn(Robot::driveTrain->getGyroReading(), 120, 0.009, 0, 0); //0.0000007
 
     // if (Robot::driveTrain->autoAim(2) < 1) {

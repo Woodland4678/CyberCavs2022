@@ -138,6 +138,9 @@ DriveTrain();
 	void resetPosition();
 
 	bool GetIsHighGear();
+
+
+	double getTankPressure();
 	
 
 	void setStart(double x, double y, double angle);

@@ -28,6 +28,7 @@ Climb::Climb(): frc::Command() {
 // Called just before this Command runs the first time
 bool done = false;
 auto m_originalTime = 0_s;
+bool doneCalibrate = false;
 
 int Climb::getDriverPOV()
 {
@@ -38,12 +39,13 @@ int Climb::getDriverPOV()
 void Climb::Initialize() {
     m_originalTime = frc::Timer::GetFPGATimestamp();
     //Robot::climber->OpenFile();
-    Robot::climber->RaiseClimber(); // Activate the lift air cylinder.
+    // Robot::climber->RaiseClimber(); // Activate the lift air cylinder.
     Robot::climber->SetClimberMode(true);
+    doneCalibrate = false;
 }
 
 int count = 0;
-bool doneCalibrate = false;
+
 // Called repeatedly when this Command is scheduled to run
 void Climb::Execute() {
     Robot::shooter->SetHoodCloseShot(); // Hood needs to be all the way down for climb to work.  Just keep calling this and it will go down.

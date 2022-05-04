@@ -144,6 +144,7 @@ void Climber::InitDefaultCommand() {
 void Climber::Periodic() {
     // Put code here to be run every loop
     frc::SmartDashboard::PutNumber("Climber Position", climberEncoder.GetPosition());
+    frc::SmartDashboard::PutBoolean("Climber calibration switch", calibrateLimit->Get());
 }
 void Climber::SetClimberPower(double pwr) {
     //climberPidController.SetReference(pwr, rev::ControlType::kVelocity);
@@ -202,30 +203,33 @@ bool isClicked = true;
 bool Climber::CalibrateClimber(){
     climbState = 0;
     originalPosition = GetClimberPosition();
-    RaiseClimber();
-     if (fabs(GetClimberPosition() - calibrateAngle) > 15.0)
-         { // If we exceded the 7 degree limit, assume horizontal was our starting position 
-         climberLeaderMotor.StopMotor(); // Stop moving
-         if (fpt != NULL)
-            fprintf(fpt,"Cal Exceeded Pos=%f, Cal Angle = %f, Set To=%f\n",GetClimberPosition(),calibrateAngle,horizontalPosition + (GetClimberPosition() - calibrateAngle));
-         climberEncoder.SetPosition(horizontalPosition + (GetClimberPosition() - calibrateAngle)); // Set position as if it was correct to start with.
-         printf("CLIMBER Set Position to %f, %f,%f,%f\n\r",(GetClimberPosition() - calibrateAngle),horizontalPosition,GetClimberPosition(),calibrateAngle);
-return true;
-         }
-    if (!calibrateLimit->Get() &&isClicked){
-        SetClimberVelocity(-500);
-    }
+    
+    if (Robot::driveTrain->getTankPressure()>=45){
+        RaiseClimber();
+        if (fabs(GetClimberPosition() - calibrateAngle) > 15.0)
+            { // If we exceded the 7 degree limit, assume horizontal was our starting position 
+            climberLeaderMotor.StopMotor(); // Stop moving
+            if (fpt != NULL)
+                fprintf(fpt,"Cal Exceeded Pos=%f, Cal Angle = %f, Set To=%f\n",GetClimberPosition(),calibrateAngle,horizontalPosition + (GetClimberPosition() - calibrateAngle));
+            climberEncoder.SetPosition(horizontalPosition + (GetClimberPosition() - calibrateAngle)); // Set position as if it was correct to start with.
+            printf("CLIMBER Set Position to %f, %f,%f,%f\n\r",(GetClimberPosition() - calibrateAngle),horizontalPosition,GetClimberPosition(),calibrateAngle);
+            return true;
+            }
+        if (!calibrateLimit->Get() &&isClicked){
+            SetClimberVelocity(-500);
+        }
 
-    else if(calibrateLimit->Get()){
-        SetClimberVelocity(500);
-        isClicked=false;
-    }else{
-        printf("Climber Set Position to %f\n\r",horizontalPosition);
-        climberEncoder.SetPosition(horizontalPosition);
-        isClicked = true;
-        climberLeaderMotor.StopMotor();
+        else if(calibrateLimit->Get()){
+            SetClimberVelocity(500);
+            isClicked=false;
+        }else{
+            printf("Climber Set Position to %f\n\r",horizontalPosition);
+            climberEncoder.SetPosition(horizontalPosition);
+            isClicked = true;
+            climberLeaderMotor.StopMotor();
 
-        return true;
+            return true;
+        }
     }
 
     return false;

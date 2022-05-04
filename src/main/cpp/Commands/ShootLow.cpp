@@ -45,11 +45,11 @@ void ShootLow::Execute() {
         Robot::intake->RetractIntake();
     }
     Robot::shooter->SetHoodMediumShot();
-    Robot::shooter->SetShooterVelocity(1500, 200);
+    Robot::shooter->SetShooterVelocity(1750, 200);
     if (Robot::shooter->GetCurrentHoodPosition() == 2) {
-        if(Robot::shooter->SetShooterVelocity(1500, 200)<200){
+        if(Robot::shooter->SetShooterVelocity(1750, 200)<100){
             Robot::intake->SetIsShooting(true);
-            Robot::intake->SetIndexerPower(-1);
+            Robot::intake->SetIndexerPower(-0.7);
             Robot::intake->SetHopperPower(0.8);
         }
     }

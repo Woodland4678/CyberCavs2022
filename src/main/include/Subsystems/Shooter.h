@@ -45,11 +45,14 @@ Shooter();
 	void SetHoodLowGoal();
 	void Shoot();
 	void SetPID(double  p, double i, double d, double f, bool ignoreIAccum);
+	void SetPIDToSpinup(bool ignoreIAccum);
+	void SetPIDToMaintain(bool ignoreIAccum);
 	void StopShooterMotor();
 	void SetServoPosition(float position);
 	void SetHoodFarShot();
 	void SetHoodCloseShot();
 	void SetHoodMediumShot();
+	void ResetCurrentHoodPosition();
 	int GetCurrentHoodPosition();
 	double GetCurrentRPM();
 	double CalcRPMMediumShot(double currentLimeVertical);
@@ -63,6 +66,6 @@ enum {
     HOODCLOSESHOTPOSITION,
 	HOODMEDIUMSHOTPOSITION,
 	};
-int currentHoodPosition = HOODCLOSESHOTPOSITION; //medium position
+int currentHoodPosition = HOODMEDIUMSHOTPOSITION; //medium position
 };
 

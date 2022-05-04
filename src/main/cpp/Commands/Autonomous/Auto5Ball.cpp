@@ -32,7 +32,7 @@ void Auto5Ball::Initialize() {
 
   path3 = new PathFinder(2.5,1,0.71,1);
   path3->setStartPoint(0,0,0); 
-  path3->splineTo(1,2.22,0,0, 3.5,0.8,0,5000); //2.48
+  path3->splineTo(1,2.32,0,0, 3.5,0.8,0,5000); //2.48
   
   // path3 = new PathFinder(1.5,1,0.71,1);
   // path3->setStartPoint(-3.341,-0.674, 0); 
@@ -206,7 +206,7 @@ void Auto5Ball::Execute() {
           // Generate Path 5 on-the-fly starting at measured location, ending up by final ball.
           printf("Path5 set Start Point...\n\r");
           path5->setStartPoint(Robot::driveTrain->location.locx/100.0,Robot::driveTrain->location.locy/100.0,360.0-Robot::driveTrain->location.heading); 
-          path5->splineTo(1,-2.408,-6.648,51,-3.5,-0.75,0,5000); 
+          path5->splineTo(1,-2.461,-7.001,51,-3.5,-0.75,0,5000); 
           
         }
         

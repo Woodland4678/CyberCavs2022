@@ -29,6 +29,7 @@ AutonomousCommand::AutonomousCommand(): frc::Command() {
 int autoStartNum = 0;
 int autoMode = 0;
 void AutonomousCommand::Initialize() {
+    Robot::shooter->ResetCurrentHoodPosition();
     if (Robot::oi->getAutoSwitch()->GetRawButton(14)) {
 		autoStartNum += 1;
 	}

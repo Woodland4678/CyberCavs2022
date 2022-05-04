@@ -150,6 +150,7 @@ void Drive::Execute() {
     Robot::driveTrain->SetRightPower(rrpm);
 
     if (Robot::intake->GetBallCount() > 0 && !startedShooter) {
+        Robot::shooter->SetPIDToSpinup(true);
         Robot::shooter->SetShooterVelocity(3800, 100);
         Robot::driveTrain->setLimeLED(true);
         startedShooter = true;
