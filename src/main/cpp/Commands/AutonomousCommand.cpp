@@ -37,7 +37,7 @@ void AutonomousCommand::Initialize() {
 		autoStartNum += 2;
 	}
 	//TODO another set of numbers for autoFinishNum
-
+ 
     // switch 2 determines the objective during autonomous
     // see AutoScenarioHelpers.cpp  transformConsoleSwitch2 - values there must match below
 

@@ -46,6 +46,8 @@ rev::SparkMaxRelativeEncoder leftDriveEncoder = leftDriveLeaderMotor.GetEncoder(
 rev::SparkMaxPIDController rightDrivePidController = rightDriveLeaderMotor.GetPIDController();
 rev::SparkMaxRelativeEncoder rightDriveEncoder = rightDriveLeaderMotor.GetEncoder();
 
+//frc::DifferentialDrive m_drive{leftDriveLeaderMotor, rightDriveLeaderMotor};
+
 //RPM PID for NEO Motor
 const double V_leftP = 0.000420; //0.000130
 const double V_leftI = 1.05e-6;
@@ -84,6 +86,7 @@ const double mAA_d = 0.00;
 
 bool isHighGear = false;
 DriveTrain::DriveTrain() : frc::Subsystem("DriveTrain") {
+   
     leftDrivePidController.SetP(V_leftP,0);
     leftDrivePidController.SetI(V_leftI,0);
     leftDrivePidController.SetD(V_leftD,0);
@@ -132,6 +135,7 @@ void DriveTrain::InitDefaultCommand() {
 
 
 void DriveTrain::Periodic() {
+    
     double rightPos,leftPos,rightDiff,leftDiff,curHeading,heading2Use,avgdist,factor;
 
     frc::SmartDashboard::PutNumber("Gyro",(getGyroReading()*-1));
@@ -296,6 +300,10 @@ void DriveTrain::setStart(double x, double y, double angle)
     prevEncLeft = leftDriveEncoder.GetPosition(); // Init left and right encoder previous positions to be ready
     prevEncRight = rightDriveEncoder.GetPosition(); // to measure any differences.
     }
+void DriveTrain::arcadeDrive(double joyY, double joyX) {
+    //m_drive.ArcadeDrive(filter.Calculate(-joyY), joyX);
+    //m_drive.ArcadeDrive(-joyY, joyX);
+}
 
 #pragma endregion
 

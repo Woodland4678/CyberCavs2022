@@ -130,7 +130,7 @@ void Intake::Periodic() {
     }
 
    
-    if (isIntakeDeployed) {
+    if (false) {
         if (colourSensor.GetProximity0() > 700) {
             blueValue = colourSensor.GetRawColor0().blue;
             redValue = colourSensor.GetRawColor0().red;
@@ -164,7 +164,7 @@ void Intake::Periodic() {
         }
         
     }
-    if (wrongBallDetected) {
+    /*if (wrongBallDetected) {
         pusherMotor.Set(-0.8);
         rollerMotor.Set(-0.8);
         SetHopperPower(-0.8);
@@ -182,7 +182,7 @@ void Intake::Periodic() {
             bluePercent = 0;
             redPercent = 0;
         }
-    }
+    }*/
     frc::SmartDashboard::PutNumber("Index Stage", indexStage);
     frc::SmartDashboard::PutNumber("BallCountStage", ballCounterState);
     frc::SmartDashboard::PutNumber("Indexer Position", GetIndexerMotorPosition());

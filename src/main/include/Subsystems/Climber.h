@@ -78,6 +78,8 @@ Climber();
 
     bool MoveClimberLevel();
 
+    int GetClimberSubState();
+
     enum {
         CLIMBINGSETUP,
         DRIVINGTOBAR,

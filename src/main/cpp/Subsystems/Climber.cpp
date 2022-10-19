@@ -31,11 +31,12 @@
 // double liftOffHighBarPosition = -150.0;
 
 // Climber Positions for Competition Bot.
-double horizontalPosition = 12.0; // 3.5 not far up enough. 20.5 too far
+double horizontalPosition = 3.5; // 12.0; // 3.5 not far up enough. 20.5 too far was 12.0 but something shifted
+// after the arm removal accident.  Trying 5.0 
 double straightUpPosition = -86.09;
-double grabHighBarPosition = 66.0; //58.5
+double grabHighBarPosition = 73.5; //58.5
 double liftOffMediumBarPosition = -5.0;
-double swingToTraverseBarPosition = 245; // -259
+double swingToTraverseBarPosition = 248; // 245 For competition.  248 for sample climber
 double grabTraverseBarPosition = 227.0;
 double finalSwingPosition = 169.5;
 double liftOffHighBarPosition = 130.0;
@@ -197,14 +198,18 @@ void Climber::IncreaseClimbState() {
 }
 
 bool isClicked = true;
+int pressureHighCnt = 0;
 
 // Modifying CalibrateClimber so that it will only move the arm about 5 degrees, then gives up and assumes a default angle.
 // 
 bool Climber::CalibrateClimber(){
     climbState = 0;
     originalPosition = GetClimberPosition();
+    if (Robot::driveTrain->getTankPressure()>=45) {
+        pressureHighCnt++;
+    }
     
-    if (Robot::driveTrain->getTankPressure()>=45){
+    if (pressureHighCnt >= 10){
         RaiseClimber();
         if (fabs(GetClimberPosition() - calibrateAngle) > 15.0)
             { // If we exceded the 7 degree limit, assume horizontal was our starting position 
@@ -930,6 +935,10 @@ void Climber::ClimbDown() // Called at 50Hz to have climbing system climb in the
     { 
 
     }
+
+int Climber::GetClimberSubState() {
+    return climbSubState; // Should not retract to low unless climbSubState is VERTICALTOFROMMIDBAR or HORIZONTALTOFROMVERTICAL (0 or 1)
+}
 
 
 

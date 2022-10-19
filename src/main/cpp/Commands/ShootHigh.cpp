@@ -32,7 +32,11 @@ int setPIDSlot = 0;
 bool isShootingCargo = false;
 // Called just before this Command runs the first time
 int hoodTargetPos = 0;
+const int numLimeLightSamples = 10;
+double limeLightVerticalVals[numLimeLightSamples];
+
 void ShootHigh::Initialize() {
+    memset(limeLightVerticalVals, 0, sizeof(limeLightVerticalVals));
     setPIDSlot = 0;
     Robot::driveTrain->ShiftDown();
     //Robot::shooter->SetHoodFarShot();
@@ -55,9 +59,10 @@ double calculatedShooterSpeed = 0;
 double targetVertical = 0;
 int isAimedCount = 0;
 double shooterSetSpeed = 0;
-float hoodHighClosestValue = -5; //value become more negative the further away we get -4.8
-float hoodMediumHighestValue = -7.2; //-6.2
-
+float hoodHighClosestValue = 4.5; //value become more negative the further away we get -4.8
+float hoodMediumHighestValue = -1.5; //-6.2
+double avgLimeVal = 0;
+double limeStdDev = 0;
 
 void ShootHigh::Execute() {
     if (Robot::driveTrain->getLimeValidObject() || canShoot) {
@@ -68,6 +73,28 @@ void ShootHigh::Execute() {
         }
         if (!canShoot || (Robot::shooter->GetCurrentHoodPosition() != hoodTargetPos)) {
             targetVertical = Robot::driveTrain->getLimeVertical();
+            ////////////////////////////////////////////////
+            //Start of average and standard deviation code//
+            ////////////////////////////////////////////////
+            for (int i = 0; i < numLimeLightSamples - 1; i++) {
+                limeLightVerticalVals[i] = limeLightVerticalVals[i+1];
+            }
+            limeLightVerticalVals[numLimeLightSamples - 1] = targetVertical;
+            avgLimeVal = 0;
+            for (int i = 0; i<numLimeLightSamples;i++) {
+                avgLimeVal += limeLightVerticalVals[i]; 
+            }
+            avgLimeVal = avgLimeVal / numLimeLightSamples;
+            targetVertical = avgLimeVal;
+            double innerSum = 0;
+            for (int i = 0; i < numLimeLightSamples; i++) {
+                innerSum += ((limeLightVerticalVals[i] - avgLimeVal) *  (limeLightVerticalVals[i] - avgLimeVal));
+            }
+            limeStdDev = innerSum / (numLimeLightSamples - 1);
+            limeStdDev = sqrt(limeStdDev);
+            frc::SmartDashboard::PutNumber("lime average", avgLimeVal);
+            frc::SmartDashboard::PutNumber("lime std dev", limeStdDev);
+            //////////////////////////////////////////////////////////////////////
             if (targetVertical <= hoodMediumHighestValue) {
                 hoodTargetPos = 0;
                 Robot::shooter->SetHoodFarShot();
@@ -97,7 +124,7 @@ void ShootHigh::Execute() {
             Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100, setPIDSlot);
         }
         if (!canShoot || !isShootingCargo) {
-            if((Robot::driveTrain->autoAim(-1) < 0.07)) {
+            if((Robot::driveTrain->autoAim(0) < 0.07)) {
                 isAimedCount++;
             }
             else {
@@ -124,8 +151,9 @@ void ShootHigh::Execute() {
             double curVel = Robot::shooter->GetCurrentRPM();
             frc::SmartDashboard::PutNumber("shooterError", abs(calculatedShooterSpeed - curVel));
             Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 45, 0);
-            if(abs(calculatedShooterSpeed - curVel)<55){ /// 
+            if(abs(calculatedShooterSpeed - curVel)<150){ /// 
                 //Robot::shooter->SetPIDToMaintain(false);
+                Robot::shooter->SetPID(0.000115, 0.000001/100, 0, 0.000002, false);
                 isShootingCargo = true;
                 Robot::intake->SetIndexerPower(-0.85);
                 Robot::intake->SetHopperPower(0.7);
@@ -174,6 +202,8 @@ void ShootHigh::End() {
     Robot::shooter->StopShooterMotor();
     Robot::intake->SetIsShooting(false);
     Robot::driveTrain->setLimeLED(false);
+    //Robot::shooter->SetPID(0.000048, 0.00004/100, 0.0, 0.00002, true);
+    Robot::shooter->SetPID(0.00017, 0.000001, 0.003, 0.00002, true);
 }
 
 // Called when another command which requires one or more of the same

@@ -19,11 +19,12 @@ double autoTargetVertical = 0;
 auto timeDelayToLiftIntake = 0_s;
 // Called when the command is initially scheduled.
 void Auto5Ball::Initialize() {
+
   Robot::driveTrain->ShiftUp();
   path1 = new PathFinder(2,2,0.71,1);
   path1->setStartPoint(-2.275,-0.674, -1.5); 
   //path1->splineTo(1,-1.4, 2.275, 0,2.0,2,0,5000); //int segmentID, double x (m), double y (m), double angle (degrees), double targetVelocity (m/s), double finalVelocity (m/s), int useActual, int samples
-  path1->splineTo(1,-3.121,-0.674, 0, -3,-0.3,0,5000); //-3.241, 0, 0 - meters
+  path1->splineTo(1,-3.171,-0.674, 0, -3,-0.3,0,5000); //-3.241, 0, 0 - meters
   
 
   //path2 = new PathFinder(1.8,1,0.71,1);
@@ -32,7 +33,7 @@ void Auto5Ball::Initialize() {
 
   path3 = new PathFinder(2.5,1,0.71,1);
   path3->setStartPoint(0,0,0); 
-  path3->splineTo(1,2.32,0,0, 3.5,0.8,0,5000); //2.48
+  path3->splineTo(1,2.22,0,0, 3.5,0.8,0,5000); //2.48 //CNE blue: 2.32 CNE RED: 2.22
   
   // path3 = new PathFinder(1.5,1,0.71,1);
   // path3->setStartPoint(-3.341,-0.674, 0); 
@@ -185,7 +186,7 @@ void Auto5Ball::Execute() {
           Robot::intake->SetIsDeployed(true);
           Robot::intake->SetRollerPower(0.9);
           Robot::intake->SetPusherPower(0.9);
-          Robot::intake->SetHopperPower(1);
+          Robot::intake->SetHopperPower(0.9);
         }
         
         if (Robot::shooter->SetShooterVelocity(shooterSpeedFirstTwoBalls, 150)<=35) {
@@ -206,7 +207,7 @@ void Auto5Ball::Execute() {
           // Generate Path 5 on-the-fly starting at measured location, ending up by final ball.
           printf("Path5 set Start Point...\n\r");
           path5->setStartPoint(Robot::driveTrain->location.locx/100.0,Robot::driveTrain->location.locy/100.0,360.0-Robot::driveTrain->location.heading); 
-          path5->splineTo(1,-2.461,-7.001,51,-3.5,-0.75,0,5000); 
+          path5->splineTo(1,-2.761,-6.701,51,-3.5,-0.75,0,5000); //CNE blue: -2.461,-7.001 CNE RED: -2.761,-6.701
           
         }
         

@@ -40,8 +40,8 @@ driverGamepad.reset(new frc::Joystick(0));
 
 autoSwitch.reset(new frc::Joystick(2));
 
-// driver_Btn1_X.reset(new frc::JoystickButton(driverGamepad.get(), 1));
-// driver_Btn1_X->WhenPressed(new ShooterPIDTester());
+ driver_Btn1_X.reset(new frc::JoystickButton(driverGamepad.get(), 1));
+ driver_Btn1_X->WhenPressed(new ShooterPIDTester());
 driver_Btn2_A.reset(new frc::JoystickButton(driverGamepad.get(), 2));
 driver_Btn2_A->WhenPressed(new IntakeDeploy());
 driver_Btn3_B.reset(new frc::JoystickButton(driverGamepad.get(), 3));

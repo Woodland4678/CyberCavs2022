@@ -33,13 +33,24 @@ void ClimbReset::Initialize() {
    
 }
 
-
+bool canReset = false;
 // Called repeatedly when this Command is scheduled to run
 void ClimbReset::Execute() {
-    if (Robot::climber->MoveClimberLevel()) {
-        Robot::climber->LowerClimber();
-        doneClimberReset = true;
+    if (Robot::oi->getOperatorGamepad()->GetPOV() == 270) {
+        canReset = true;
     }
+    //if (Robot::climber->GetClimberSubState() < 2) {
+    if (canReset) {
+        if (Robot::climber->MoveClimberLevel()) {
+            Robot::climber->LowerClimber();
+            doneClimberReset = true;
+        }
+    }
+    
+    //}
+    //else {
+     //   doneClimberReset = true;
+    //}
 
 }
 
@@ -51,6 +62,7 @@ bool ClimbReset::IsFinished() {
 // Called once after isFinished returns true
 void ClimbReset::End() {
     doneClimberReset = false;
+    canReset = false;
     Robot::climber->SetClimberMode(false);
 }
 

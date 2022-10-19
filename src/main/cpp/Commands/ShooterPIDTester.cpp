@@ -68,7 +68,9 @@ void ShooterPIDTester::Execute() {
         kF = f;
     }
     if (Robot::oi->getDriverGamepad()->GetPOV() == 0) {
-        Robot::shooter->SetPID(0.00017, 0.000001, 0.003, 0.000002, true);
+        //Robot::shooter->SetPID(0.00017, 0.000001, 0.003, 0.000002, true);
+        //Robot::shooter->SetPID(0.000048, 0.00004/100, 0.0,0.00002, true);
+        Robot::shooter->SetPID(kP, kI/100, kD, kF, true);
         Robot::shooter->SetShooterVelocity(4000, 100, 0);
 
     }
