@@ -36,6 +36,9 @@ void AutonomousCommand::Initialize() {
 	if (Robot::oi->getAutoSwitch()->GetRawButton(15)) {
 		autoStartNum += 2;
 	}
+    if (Robot::oi->getAutoSwitch()->GetRawButton(16)) {
+		autoStartNum += 4;
+	}
 	//TODO another set of numbers for autoFinishNum
  
     // switch 2 determines the objective during autonomous
@@ -65,6 +68,7 @@ void AutonomousCommand::Initialize() {
     //autoStep = 0;
     Robot::driveTrain->resetGyro();
     autonomousMode->Start();
+    Robot::driveTrain->ShiftUp();
     
 }
 

@@ -207,7 +207,7 @@ void Auto5Ball::Execute() {
           // Generate Path 5 on-the-fly starting at measured location, ending up by final ball.
           printf("Path5 set Start Point...\n\r");
           path5->setStartPoint(Robot::driveTrain->location.locx/100.0,Robot::driveTrain->location.locy/100.0,360.0-Robot::driveTrain->location.heading); 
-          path5->splineTo(1,-2.761,-6.701,51,-3.5,-0.75,0,5000); //CNE blue: -2.461,-7.001 CNE RED: -2.761,-6.701
+          path5->splineTo(1,-2.461,-7.001,51,-3.5,-0.75,0,5000); //CNE blue: -2.461,-7.001 CNE RED: -2.761,-6.701
           
         }
         

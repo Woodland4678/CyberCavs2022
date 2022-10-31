@@ -34,8 +34,13 @@ bool isShootingCargo = false;
 int hoodTargetPos = 0;
 const int numLimeLightSamples = 10;
 double limeLightVerticalVals[numLimeLightSamples];
+int rpmAdjustIncrement = 0;
+int rpmAdjustAmount = 50;
+int totalRPMAdjust = 0;
 
 void ShootHigh::Initialize() {
+    rpmAdjustIncrement = 0;
+    totalRPMAdjust = 0;
     memset(limeLightVerticalVals, 0, sizeof(limeLightVerticalVals));
     setPIDSlot = 0;
     Robot::driveTrain->ShiftDown();
@@ -64,7 +69,19 @@ float hoodMediumHighestValue = -1.5; //-6.2
 double avgLimeVal = 0;
 double limeStdDev = 0;
 
+
 void ShootHigh::Execute() {
+    rpmAdjustIncrement = 0;
+    if (Robot::oi->getAutoSwitch()->GetRawButton(14)) {
+		rpmAdjustIncrement += 1;
+	}
+	if (Robot::oi->getAutoSwitch()->GetRawButton(15)) {
+		rpmAdjustIncrement += 2;
+	}
+    if (Robot::oi->getAutoSwitch()->GetRawButton(16)) {
+		rpmAdjustIncrement += 4;
+	}
+    totalRPMAdjust = (rpmAdjustIncrement - 4) * rpmAdjustAmount;
     if (Robot::driveTrain->getLimeValidObject() || canShoot) {
         if (frc::Timer::GetFPGATimestamp() - shootingTimer > 1.5_s) {
             Robot::intake->SetRollerPower(0);
@@ -99,26 +116,26 @@ void ShootHigh::Execute() {
                 hoodTargetPos = 0;
                 Robot::shooter->SetHoodFarShot();
                 //calculatedShooterSpeed = 4.2858 * targetVertical * targetVertical + 4.206434 * targetVertical + 3494.6577; //3429 was 3429.6577 at waterloo day 1
-                calculatedShooterSpeed = Robot::shooter->CalcRPMFarShot(targetVertical);
+                calculatedShooterSpeed = Robot::shooter->CalcRPMFarShot(targetVertical) + totalRPMAdjust;
             }
             else if (targetVertical >= hoodHighClosestValue) {
                 hoodTargetPos = 2;
                 Robot::shooter->SetHoodMediumShot();
                 //calculatedShooterSpeed = 2.36858 * targetVertical * targetVertical + -48.24201 * targetVertical + 3472.9; //3439.9 was 3439.9 at waterloo day 1
-                calculatedShooterSpeed = Robot::shooter->CalcRPMMediumShot(targetVertical);
+                calculatedShooterSpeed = Robot::shooter->CalcRPMMediumShot(targetVertical) + totalRPMAdjust;
             }
             else {
                 if (Robot::shooter->GetCurrentHoodPosition() == 1 || Robot::shooter->GetCurrentHoodPosition() == 0) {
                     Robot::shooter->SetHoodFarShot();
                     hoodTargetPos = 0;
                    // calculatedShooterSpeed = 4.2858 * targetVertical * targetVertical + 4.206434 * targetVertical + 3494.6577;
-                   calculatedShooterSpeed = Robot::shooter->CalcRPMFarShot(targetVertical);
+                   calculatedShooterSpeed = Robot::shooter->CalcRPMFarShot(targetVertical) + totalRPMAdjust;
                     
                 }
                 else {
                     hoodTargetPos = 2;
                     //calculatedShooterSpeed = 2.36858 * targetVertical * targetVertical + -48.24201 * targetVertical + 3472.9; //need equation here later
-                    calculatedShooterSpeed = Robot::shooter->CalcRPMMediumShot(targetVertical);
+                    calculatedShooterSpeed = Robot::shooter->CalcRPMMediumShot(targetVertical) + totalRPMAdjust;
                 }
             }
             Robot::shooter->SetShooterVelocity(calculatedShooterSpeed, 100, setPIDSlot);

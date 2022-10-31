@@ -31,10 +31,10 @@
 // double liftOffHighBarPosition = -150.0;
 
 // Climber Positions for Competition Bot.
-double horizontalPosition = 3.5; // 12.0; // 3.5 not far up enough. 20.5 too far was 12.0 but something shifted
+double horizontalPosition = 5.5; // 12.0; // 3.5 not far up enough. 20.5 too far was 12.0 but something shifted
 // after the arm removal accident.  Trying 5.0 
 double straightUpPosition = -86.09;
-double grabHighBarPosition = 73.5; //58.5
+double grabHighBarPosition = 66; //58.5
 double liftOffMediumBarPosition = -5.0;
 double swingToTraverseBarPosition = 248; // 245 For competition.  248 for sample climber
 double grabTraverseBarPosition = 227.0;
